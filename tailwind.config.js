@@ -1,4 +1,5 @@
-import plugin from '@sveltejs/adapter-auto';
+// import plugin from '@sveltejs/adapter-auto';
+import plugin from 'amplify-adapter';
 
 /** @type {import('tailwindcss').Config} */
 export default {
