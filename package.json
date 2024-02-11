@@ -28,6 +28,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"amplify-adapter": "^0.1.2",
+		"aws-amplify": "^6.0.16",
 		"firebase": "^10.7.2",
 		"install": "^0.13.0",
 		"postgres": "^3.4.3",
