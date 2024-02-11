@@ -1,0 +1,37 @@
+{
+	"user": {
+		"uid": "gV6WbaVBcmPAsZZd4fAfhp783CF3",
+		"email": "admin4@mysimplelead.com",
+		"emailVerified": false,
+		"isAnonymous": false,
+		"providerData": [
+			{
+				"providerId": "password",
+				"uid": "admin4@mysimplelead.com",
+				"displayName": null,
+				"email": "admin4@mysimplelead.com",
+				"phoneNumber": null,
+				"photoURL": null
+			}
+		],
+		"stsTokenManager": {
+			"refreshToken": "AMf-vBxWH3aEnNc5i8uE2ZyEJr93VaJ12zlyE0dTH__11x3qeW87mESL-cGumQAMHkQ4k2nD7LVfrb8Y_D8oSU2w0TNjbOKBzrMRuvmT-VB1UfwwBc64brG1hIxFa4BURSXs0YrFFn86I4dcuqEZ8RSkm-K9_uWXwPbRc4m__u4KbbJ36YdMpvC0RHqW3Zu6k7x95UjOIirekY8c32Pt1TfOzEe6c5otSQ",
+			"accessToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY5NjI5NzU5NmJiNWQ4N2NjOTc2Y2E2YmY0Mzc3NGE3YWE5OTMxMjkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vbXlzaW1wbGVsZWFkIiwiYXVkIjoibXlzaW1wbGVsZWFkIiwiYXV0aF90aW1lIjoxNzA2NzUxMzE3LCJ1c2VyX2lkIjoiZ1Y2V2JhVkJjbVBBc1paZDRmQWZocDc4M0NGMyIsInN1YiI6ImdWNldiYVZCY21QQXNaWmQ0ZkFmaHA3ODNDRjMiLCJpYXQiOjE3MDY3NTEzMTcsImV4cCI6MTcwNjc1NDkxNywiZW1haWwiOiJhZG1pbjRAbXlzaW1wbGVsZWFkLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJhZG1pbjRAbXlzaW1wbGVsZWFkLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.XE_tPWRP4Z_6LavCa_t1lMn6tmnZ-BnOxog3iUlsGpUUK6pzvzksc5NfodwlB6xfXoVCQWOki4C0H5Z5s7Xf8MDPE97W1z1Vr1c0wt2THO7ONNjTjq1g8BbjvgUzLJgW1Mem-_CD9-E6tnerghgFQ8GYK6tLUQMMn9SAEtdIhglFG9jg3ap7xZqYgznwWf6cabp1xES4HW3sz_AM8fRbTLnXnZ84EDZNMxMW0ug9KV5lVDrivzMV_Gk9WWFH-vvwk16CIyVoz473At39Ql5mIZlQIAN08eeHNy8rx0xBJEFMNcEctZgIKGx4DZTFCfcOmk9gOVGBMhIpeaChKfCKlw",
+			"expirationTime": 1706754917238
+		},
+		"createdAt": "1706751317061",
+		"lastLoginAt": "1706751317061",
+		"apiKey": "AIzaSyAtfEJtGzmXWvggZ0iD2O6iD3D4Czfk3oA",
+		"appName": "[DEFAULT]"
+	},
+	"providerId": null,
+	"_tokenResponse": {
+		"kind": "identitytoolkit#SignupNewUserResponse",
+		"idToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY5NjI5NzU5NmJiNWQ4N2NjOTc2Y2E2YmY0Mzc3NGE3YWE5OTMxMjkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vbXlzaW1wbGVsZWFkIiwiYXVkIjoibXlzaW1wbGVsZWFkIiwiYXV0aF90aW1lIjoxNzA2NzUxMzE3LCJ1c2VyX2lkIjoiZ1Y2V2JhVkJjbVBBc1paZDRmQWZocDc4M0NGMyIsInN1YiI6ImdWNldiYVZCY21QQXNaWmQ0ZkFmaHA3ODNDRjMiLCJpYXQiOjE3MDY3NTEzMTcsImV4cCI6MTcwNjc1NDkxNywiZW1haWwiOiJhZG1pbjRAbXlzaW1wbGVsZWFkLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJhZG1pbjRAbXlzaW1wbGVsZWFkLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.XE_tPWRP4Z_6LavCa_t1lMn6tmnZ-BnOxog3iUlsGpUUK6pzvzksc5NfodwlB6xfXoVCQWOki4C0H5Z5s7Xf8MDPE97W1z1Vr1c0wt2THO7ONNjTjq1g8BbjvgUzLJgW1Mem-_CD9-E6tnerghgFQ8GYK6tLUQMMn9SAEtdIhglFG9jg3ap7xZqYgznwWf6cabp1xES4HW3sz_AM8fRbTLnXnZ84EDZNMxMW0ug9KV5lVDrivzMV_Gk9WWFH-vvwk16CIyVoz473At39Ql5mIZlQIAN08eeHNy8rx0xBJEFMNcEctZgIKGx4DZTFCfcOmk9gOVGBMhIpeaChKfCKlw",
+		"email": "admin4@mysimplelead.com",
+		"refreshToken": "AMf-vBxWH3aEnNc5i8uE2ZyEJr93VaJ12zlyE0dTH__11x3qeW87mESL-cGumQAMHkQ4k2nD7LVfrb8Y_D8oSU2w0TNjbOKBzrMRuvmT-VB1UfwwBc64brG1hIxFa4BURSXs0YrFFn86I4dcuqEZ8RSkm-K9_uWXwPbRc4m__u4KbbJ36YdMpvC0RHqW3Zu6k7x95UjOIirekY8c32Pt1TfOzEe6c5otSQ",
+		"expiresIn": "3600",
+		"localId": "gV6WbaVBcmPAsZZd4fAfhp783CF3"
+	},
+	"operationType": "signIn"
+}

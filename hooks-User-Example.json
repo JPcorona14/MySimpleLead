@@ -1,0 +1,25 @@
+{
+	"uid": "UxsBW367lhRVJWx7AnTFKLuvJvV2",
+	"email": "admin@mysimplelead.com",
+	"emailVerified": false,
+	"isAnonymous": false,
+	"providerData": [
+		{
+			"providerId": "password",
+			"uid": "admin@mysimplelead.com",
+			"displayName": null,
+			"email": "admin@mysimplelead.com",
+			"phoneNumber": null,
+			"photoURL": null
+		}
+	],
+	"stsTokenManager": {
+		"refreshToken": "AMf-vBzIXaP8IZ8m8zr8eLZnFS6I8MeDK8aNZuHNYf9kP8Nsf4FGJio3SA2BcKmgN2Y6BygTH8p9_hXcHnY3qhqCKhNlduIxJIVY2OVqO4T4w6wIo-kkVdge9gmsdkAAfW5IMZoDoPJXFR2XDVIQalaEfC2Au_FvdIQrnUC1KfWit3pjWzUGIF4JKlMhiuNfghI8JdNpCXeM_ADAx7BBvGd-1nKWgxF6Ew",
+		"accessToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY5NjI5NzU5NmJiNWQ4N2NjOTc2Y2E2YmY0Mzc3NGE3YWE5OTMxMjkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vbXlzaW1wbGVsZWFkIiwiYXVkIjoibXlzaW1wbGVsZWFkIiwiYXV0aF90aW1lIjoxNzA2OTc5NzMzLCJ1c2VyX2lkIjoiVXhzQlczNjdsaFJWSld4N0FuVEZLTHV2SnZWMiIsInN1YiI6IlV4c0JXMzY3bGhSVkpXeDdBblRGS0x1dkp2VjIiLCJpYXQiOjE3MDY5Nzk3MzMsImV4cCI6MTcwNjk4MzMzMywiZW1haWwiOiJhZG1pbkBteXNpbXBsZWxlYWQuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImFkbWluQG15c2ltcGxlbGVhZC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.jR7sLh5lbatrwkKVn03kQHvWgL78333Fy_gnYvNWvuHPHi316oc-hX_L9Lx6RH4bDcXxv-JgCrep3i0zPNbdmeS0tHy-JY-3gwM9-_NThgvM2rkVY5tohBWx2-sGZFolQ-x61S7-JQnroNSLx0WcxLuvhyV8DOJi8iHLIGtR1awv4USM_1FS16eTfXcdVSu2LVbYHNx8r-yJekK3IyhP0OhP8ck3Sb8uZn_mJDQRd5kJ6HgZuJ-wQix8zx0f033aTf5sPL_yWJPkFrLjVhsKOhEi4BsCLHoPTluDy6uthKjSQv1wMFmS4Y058HJeSY_ecbBhjhw_g3G9e-CYE0C24A",
+		"expirationTime": 1706983333433
+	},
+	"createdAt": "1706751810836",
+	"lastLoginAt": "1706979733422",
+	"apiKey": "AIzaSyAtfEJtGzmXWvggZ0iD2O6iD3D4Czfk3oA",
+	"appName": "[DEFAULT]"
+}
