@@ -49,8 +49,9 @@
 							}
 						});
 				});
+				console.log('Finished logging in');
 			} catch (err) {
-				console.log(err.message);
+				console.log(err);
 			} finally {
 			}
 		} else {

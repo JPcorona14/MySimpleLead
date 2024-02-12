@@ -14,12 +14,11 @@
 	const optionStyle = 'ml-auto mr-auto mb-3 md:text-xl text-3xl text-white no-underline pt-1 pb-1';
 	const selected = 'bg-select w-full text-center shadow-md';
 	let currentURL = '';
-	let orgID = 'Test';
 
 	onMount(() => {
 		currentURL = window.location.href;
 		isMobile = window.innerWidth <= 850 ? true : false;
-		checkLogin($authStore.orgid);
+		// checkLogin($authStore.orgid);
 	});
 
 	const logOut = async () => {

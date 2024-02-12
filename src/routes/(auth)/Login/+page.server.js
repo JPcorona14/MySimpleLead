@@ -44,6 +44,6 @@ const registerUser = z.object({
 export const load = async ({ locals }) => {
 	// console.log(locals.user);
 	if (locals?.user) {
-		redirect(301, '/Leads');
+		throw redirect(301, '/Leads');
 	}
 };

@@ -4,7 +4,7 @@ import { sql } from 'src/db/postgresql.server';
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
 	if (!locals.user) {
-		redirect(301, '/Login');
+		throw redirect(301, '/Login');
 	}
 	const orgid = locals.user.orgid;
 
