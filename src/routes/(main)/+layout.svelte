@@ -98,14 +98,13 @@
 							currentURL = '/UserProfile';
 						}}>User Profile</a
 					>
-					<a
-						href={`/Login`}
-						class={`${optionStyle} ${currentURL.includes('/UserProfile') ? selected : ''} transform`}
+					<button
+						class={`${optionStyle} ${currentURL.includes('/Logout') ? selected : ''} transform`}
 						on:click={() => {
 							logOut();
 							menuActive = false;
 							currentURL = '/Login';
-						}}>Logout</a
+						}}>Logout</button
 					>
 				</div>
 			</div>
