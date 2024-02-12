@@ -3,9 +3,9 @@ import { sql } from 'src/db/postgresql.server';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
-	if (!locals.user) {
-		throw redirect(301, '/Login');
-	}
+	// if (!locals.user) {
+	// 	throw redirect(301, '/Login');
+	// }
 	const orgid = locals.user.orgid;
 
 	//List of Leads are pulled from the server to then generate the leads break out by card in each board
