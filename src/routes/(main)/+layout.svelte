@@ -3,8 +3,6 @@
 	import { onMount } from 'svelte';
 	import GoThreeBars from 'svelte-icons/go/GoThreeBars.svelte';
 	import { authHandlers } from '$stores/authStore';
-	import { authStore } from '$stores/authStore';
-	import { checkLogin } from 'src/lib/CheckLogin';
 	import { goto } from '$app/navigation';
 
 	let menuActive = false;
@@ -21,7 +19,11 @@
 	});
 
 	const logOut = async () => {
-		await authHandlers.logout();
+		try {
+			await authHandlers.logout();
+		} catch (err) {
+			console.log(err);
+		}
 		document.cookie = `orgid=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 		document.cookie = `uid=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 		goto('/Login');
@@ -100,6 +102,7 @@
 						href={`/Login`}
 						class={`${optionStyle} ${currentURL.includes('/UserProfile') ? selected : ''} transform`}
 						on:click={() => {
+							logOut();
 							menuActive = false;
 							currentURL = '/Login';
 						}}>Logout</a
