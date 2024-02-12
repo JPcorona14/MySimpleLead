@@ -3,6 +3,7 @@ import { sql } from 'src/db/postgresql.server';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
+	console.log('No Locals from Leads Page: ' + locals?.user);
 	// if (!locals.user) {
 	// 	throw redirect(301, '/Login');
 	// }

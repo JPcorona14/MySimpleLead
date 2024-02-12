@@ -18,7 +18,6 @@
 	onMount(() => {
 		currentURL = window.location.href;
 		isMobile = window.innerWidth <= 850 ? true : false;
-		// checkLogin($authStore.orgid);
 	});
 
 	const logOut = async () => {

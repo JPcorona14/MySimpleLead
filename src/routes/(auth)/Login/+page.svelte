@@ -8,6 +8,7 @@
 	let password = null;
 
 	const userSignIn = async () => {
+		console.log('Login Function');
 		if (!email || !password) {
 			alert('Need Email and Password');
 		} else if (email || password) {
