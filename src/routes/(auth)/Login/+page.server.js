@@ -42,33 +42,8 @@ const registerUser = z.object({
 });
 
 export const load = async ({ locals }) => {
-	console.log(locals.user);
-	if (locals.user) {
+	// console.log(locals.user);
+	if (locals?.user) {
 		redirect(301, '/Leads');
 	}
 };
-
-// export const actions = {
-// 	default: async ({ request }) => {
-// 		const data = Object.fromEntries(await request.formData());
-// 		/**@type {string} */
-// 		const email = data.email.toString();
-// 		/**@type {string} */
-// 		const password = data.password.toString();
-// 		let userLogin;
-
-// 		if (!email || !password) {
-// 			return fail(301, { message: 'Need Email and Password' });
-// 		} else if (email || password) {
-// 			try {
-// 				userLogin = await authHandlers.login(email, password);
-// 			} catch (err) {
-// 				console.log(err.message);
-// 			} finally {
-// 				if (userLogin?.operationType) redirect(301, '/test/Leads');
-// 			}
-// 		} else {
-// 			return fail(301, { message: 'Unable to Login, please contact support' });
-// 		}
-// 	}
-// };
