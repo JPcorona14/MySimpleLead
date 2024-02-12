@@ -1,5 +1,4 @@
 import { redirect } from '@sveltejs/kit';
-import { authStore } from 'src/routes/stores/authStore';
 import z from 'zod';
 
 /** @param {string} str */

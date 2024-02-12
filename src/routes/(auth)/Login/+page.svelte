@@ -1,8 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { checkLogin } from 'src/lib/CheckLogin';
 	import { authHandlers, authStore } from 'src/routes/stores/authStore';
-	import { onMount } from 'svelte';
 
 	/**@type {string | null} */
 	let email = null;
@@ -61,37 +59,37 @@
 	};
 </script>
 
-<div class="flex justify-center h-screen">
-	<section class="mt-auto mb-auto flex flex-col bg-main shadow-md shadow-gray-500 rounded-lg">
+<div class="flex h-screen justify-center">
+	<section class="mb-auto mt-auto flex flex-col rounded-lg bg-main shadow-md shadow-gray-500">
 		<h1
-			class="mt-10 mb-10 ml-auto mr-auto text-white text-4xl font-semibold text-wrap w-1/2 text-center"
+			class="mb-10 ml-auto mr-auto mt-10 w-1/2 text-wrap text-center text-4xl font-semibold text-white"
 		>
 			My Simple Lead
 		</h1>
-		<form on:submit={userSignIn} class="flex flex-col ml-10 mr-10 text-center">
-			<label for="email" class="text-white md:text-base text-2xl">Email</label>
+		<form on:submit={userSignIn} class="ml-10 mr-10 flex flex-col text-center">
+			<label for="email" class="text-2xl text-white md:text-base">Email</label>
 			<input
 				name="email"
 				type="text"
 				placeholder="Email"
 				bind:value={email}
-				class="pl-2 pr-2 rounded-md md:h-6 h-8 text-center"
+				class="h-8 rounded-md pl-2 pr-2 text-center md:h-6"
 			/>
-			<label for="password" class="text-white mt-4 md:text-base text-2xl">Password</label>
+			<label for="password" class="mt-4 text-2xl text-white md:text-base">Password</label>
 			<input
 				name="password"
 				type="password"
 				bind:value={password}
 				placeholder="Password"
-				class="pl-2 pr-2 rounded-md md:h-6 h-8 text-center"
+				class="h-8 rounded-md pl-2 pr-2 text-center md:h-6"
 			/>
 
 			<button
 				type="submit"
-				class=" bg-green-500 text-white rounded-md mt-10 mb-5 w-3/4 ml-auto mr-auto md:h-6 h-8 md:text-base text-xl"
+				class=" mb-5 ml-auto mr-auto mt-10 h-8 w-3/4 rounded-md bg-green-500 text-xl text-white md:h-6 md:text-base"
 				>Login</button
 			>
 		</form>
-		<a href="./Register" class=" text-white underline mb-10 text-center">Register</a>
+		<a href="./Register" class=" mb-10 text-center text-white underline">Register</a>
 	</section>
 </div>
