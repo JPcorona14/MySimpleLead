@@ -1,11 +1,44 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { authHandlers, authStore } from 'src/routes/stores/authStore';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	/**@type {string | null} */
 	let email = null;
 	/**@type {string | null} */
 	let password = null;
+
+	function getAuthErrorMessage(code) {
+		switch (code) {
+			case 'auth/email-already-in-use':
+				return 'This email address is already in use by another account.';
+			case 'auth/wrong-password':
+				return 'Incorrect password. Please try again or use the "Forgot password?" option to reset it.';
+			case 'auth/user-not-found':
+				return 'No user found with this email address. Please check the email provided or sign up.';
+			case 'auth/user-disabled':
+				return 'This user account has been disabled. Please contact support for help.';
+			case 'auth/too-many-requests':
+				return 'We have detected too many requests from your device. Please take a break and try again later.';
+			case 'auth/network-request-failed':
+				return 'Network error. Please check your internet connection and try again.';
+			case 'auth/invalid-email':
+				return 'The email address is badly formatted. Please enter a valid email address.';
+			case 'auth/operation-not-allowed':
+				return 'Signing in with Email and Password is not enabled. Please contact support or try another sign-in method.';
+			case 'auth/account-exists-with-different-credential':
+				return 'An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.';
+			case 'auth/auth-domain-config-required':
+				return 'Authentication domain configuration is required. Please check your Firebase setup.';
+			case 'auth/credential-already-in-use':
+				return 'This credential is already associated with a different user account.';
+			case 'auth/invalid-credential':
+				return 'The provided credential is invalid. Please try again with a valid credential.';
+
+			default:
+				return 'An error occurred. Please try again.';
+		}
+	}
 
 	const userSignIn = async () => {
 		console.log('Login Function');
@@ -53,6 +86,7 @@
 				console.log('Finished logging in');
 			} catch (err) {
 				console.log(err);
+				toast.error(getAuthErrorMessage(err.code));
 			} finally {
 			}
 		} else {
@@ -61,6 +95,7 @@
 	};
 </script>
 
+<Toaster />
 <div class="flex h-screen justify-center">
 	<section class="mb-auto mt-auto flex flex-col rounded-lg bg-main shadow-md shadow-gray-500">
 		<h1

@@ -187,7 +187,7 @@
 					}}>User Profile</a
 				>
 				<button
-					class={`${optionStyle} ${currentURL.includes('/UserProfile') ? selected : ''} transform`}
+					class={`${optionStyle} ${currentURL.includes('/Logout') ? selected : ''} transform`}
 					on:click={() => {
 						logOut();
 						menuActive = false;

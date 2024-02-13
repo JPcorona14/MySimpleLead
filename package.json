@@ -33,6 +33,7 @@
 		"install": "^0.13.0",
 		"postgres": "^3.4.3",
 		"svelte-dnd-action": "^0.9.38",
+		"svelte-french-toast": "^1.2.0",
 		"svelte-icons": "^2.1.0",
 		"zod": "^3.22.4"
 	}

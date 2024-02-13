@@ -46,6 +46,7 @@ export const actions = {
 		const orgid = locals.user.orgid;
 		const uid = locals.user.uid;
 		const existingCustomer = data.existingCustomer === 'true' ? true : false;
+
 		let addCustomer;
 		let newCustomer;
 
@@ -65,21 +66,29 @@ export const actions = {
 				prior_charges: data.prior_charges || null
 			};
 
-			addCustomer = await sql`insert into customers ${sql(
-				newCustomer,
-				'orgid',
-				'created_by',
-				'first_name',
-				'last_name',
-				'email',
-				'phone_1',
-				'phone_2',
-				'date_of_birth',
-				'occupation',
-				'residence',
-				'relationship',
-				'prior_charges'
-			)} returning *`;
+			try {
+				addCustomer = await sql`insert into customers ${sql(
+					newCustomer,
+					'orgid',
+					'created_by',
+					'first_name',
+					'last_name',
+					'email',
+					'phone_1',
+					'phone_2',
+					'date_of_birth',
+					'occupation',
+					'residence',
+					'relationship',
+					'prior_charges'
+				)} returning *`;
+			} catch (err) {
+				//Need to have this return the data back and fill in the fields so the user doesn't have to enter them again
+				//Need to also add in a pop up notification system to let the user know that the lead could not be enterred
+				//Will also need to make it so that the field with the error shows what the error was about
+				console.log(err);
+				return { error: true, message: err.message, data };
+			}
 		}
 
 		if (existingCustomer || addCustomer.length) {
@@ -98,21 +107,29 @@ export const actions = {
 				status: data.status
 			};
 
-			const addLead = await sql`insert into leads ${sql(
-				newLead,
-				'orgid',
-				'created_by',
-				'customer_id',
-				'finance_owner',
-				'referral',
-				'court',
-				'case_number',
-				'date_of_incident',
-				'quote',
-				'charges',
-				'reason_for_visit',
-				'status'
-			)} returning *`;
+			let addLead;
+			try {
+				addLead = await sql`insert into leads ${sql(
+					newLead,
+					'orgid',
+					'created_by',
+					'customer_id',
+					'finance_owner',
+					'referral',
+					'court',
+					'case_number',
+					'date_of_incident',
+					'quote',
+					'charges',
+					'reason_for_visit',
+					'status'
+				)} returning *`;
+			} catch (err) {
+				//Need to have this return the data back and fill in the fields so the user doesn't have to enter them again
+				//Need to also add in a pop up notification system to let the user know that the lead could not be enterred
+				//Will also need to make it so that the field with the error shows what the error was about
+				console.log(err);
+			}
 
 			if (addLead.length) {
 				const addActivity = await sql`

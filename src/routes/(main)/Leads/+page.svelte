@@ -2,7 +2,10 @@
 	import { fly } from 'svelte/transition';
 	import LeadCard from './LeadCard.svelte';
 	import FaUserPlus from 'svelte-icons/fa/FaUserPlus.svelte';
+	import { onMount } from 'svelte';
+	import toast from 'svelte-french-toast';
 	export let data;
+	export let form;
 	let customerList = data.customerList
 		.sort((a, b) => (a.Name.toUpperCase() < b.Name.toUpperCase() ? -1 : 1))
 		.slice(0, 5);
@@ -11,6 +14,16 @@
 	let toggleArchive = false;
 	let toggleSearchExistingCustomer = false;
 	let customerLoaded = false;
+	/** @type {number | string}*/
+	let newLeadsValue = 0;
+	/** @type {number | string}*/
+	let contactedValue = 0;
+	/** @type {number | string}*/
+	let quotedValue = 0;
+	/** @type {number | string}*/
+	let wonValue = 0;
+	/** @type {number | string}*/
+	let lostValue = 0;
 	let customerDetails = {
 		id: 0,
 		orgid: null,
@@ -61,6 +74,60 @@
 		} else {
 			displayList = leadList;
 		}
+	};
+
+	/**
+	 *
+	 * @param {number} num
+	 */
+	function formatNumberToCurrencyShort(num) {
+		if (num < 1000) {
+			// For numbers less than 1000, simply prepend the dollar sign
+			return '$' + num;
+		} else if (num % 1000) {
+			// For numbers 1000 and above, divide by 1000 and format to one decimal place
+			const dividedNum = num / 1000;
+			return '$' + dividedNum.toFixed(1) + 'k';
+		} else {
+			const dividedNum = num / 1000;
+			return '$' + dividedNum.toFixed(0) + 'k';
+		}
+	}
+
+	const updateValue = () => {
+		newLeadsValue = 0;
+		contactedValue = 0;
+		quotedValue = 0;
+		wonValue = 0;
+		lostValue = 0;
+
+		displayList.forEach((e) => {
+			switch (e.Status) {
+				case 'New Lead':
+					newLeadsValue = newLeadsValue + e.Quote;
+					return;
+				case 'Contacted':
+					contactedValue = contactedValue + e.Quote;
+					return;
+				case 'Quoted':
+					quotedValue = quotedValue + e.Quote;
+					return;
+				case 'Won':
+					wonValue = wonValue + e.Quote;
+					return;
+				case 'Lost':
+					lostValue = lostValue + e.Quote;
+					return;
+				default:
+					return;
+			}
+		});
+
+		newLeadsValue = formatNumberToCurrencyShort(newLeadsValue);
+		contactedValue = formatNumberToCurrencyShort(contactedValue);
+		quotedValue = formatNumberToCurrencyShort(quotedValue);
+		wonValue = formatNumberToCurrencyShort(wonValue);
+		lostValue = formatNumberToCurrencyShort(lostValue);
 	};
 
 	/**
@@ -201,6 +268,13 @@
 	};
 
 	showArchived();
+	updateValue();
+
+	onMount(() => {
+		if (form?.error) {
+			toast(form.message);
+		}
+	});
 </script>
 
 <div
@@ -240,7 +314,11 @@
 	>
 		<!-- New Leads -->
 		<ul class={containerStyle} on:drop={(e) => assignedDrop(e, 'New Lead')} on:dragover={dragOver}>
-			<h4 class={containerTitleStyle}>New Leads</h4>
+			<div class="flex justify-evenly">
+				<div />
+				<h4 class={containerTitleStyle}>New Leads</h4>
+				<div class="mb-auto mt-auto">{newLeadsValue}</div>
+			</div>
 			<div class="flex h-full flex-col">
 				{#each displayList as lead (lead.id)}
 					{#if lead.Status === 'New Lead'}
@@ -262,7 +340,11 @@
 			on:drop={(e) => assignedDrop(e, 'Contacted')}
 			on:dragover={dragOver}
 		>
-			<h4 class={containerTitleStyle}>Contacted</h4>
+			<div class="flex justify-evenly">
+				<div />
+				<h4 class={containerTitleStyle}>Contacted</h4>
+				<div class="mb-auto mt-auto">{contactedValue}</div>
+			</div>
 			<div class="flex h-full flex-col">
 				{#each displayList as lead (lead.id)}
 					{#if lead.Status === 'Contacted'}
@@ -283,7 +365,11 @@
 			on:drop={(e) => assignedDrop(e, 'Quoted')}
 			on:dragover={dragOver}
 		>
-			<h4 class={containerTitleStyle}>Quoted</h4>
+			<div class="flex justify-evenly">
+				<div />
+				<h4 class={containerTitleStyle}>Quoted</h4>
+				<div class="mb-auto mt-auto">{quotedValue}</div>
+			</div>
 			<div class="flex h-full flex-col">
 				{#each displayList as lead}
 					{#if lead.Status === 'Quoted'}
@@ -313,7 +399,11 @@
 				on:drop={(e) => assignedDrop(e, 'Won')}
 				on:dragover={dragOver}
 			>
-				<h4 class="text-center text-3xl text-white md:text-2xl">Won</h4>
+				<div class="flex justify-evenly text-white">
+					<div />
+					<h4 class="text-center text-3xl text-white md:text-2xl">Won</h4>
+					<div class="mb-auto mt-auto">{wonValue}</div>
+				</div>
 				<div class="no-scrollbar flex h-full flex-col overflow-y-scroll pb-10">
 					{#each displayList as lead}
 						{#if lead.Status === 'Won'}
@@ -328,13 +418,20 @@
 					{/each}
 				</div>
 			</ul>
+
+			<!---------->
 			<!-- Lost -->
+			<!---------->
 			<ul
 				class="mb-5 flex flex-col justify-center overflow-hidden rounded-lg bg-bad pt-10 text-xl font-semibold shadow-md shadow-gray-500 md:mb-0 md:h-[49%]"
 				on:drop={(e) => assignedDrop(e, 'Lost')}
 				on:dragover={dragOver}
 			>
-				<h4 class="text-center text-3xl text-white md:text-2xl">Lost</h4>
+				<div class="flex justify-evenly text-white">
+					<div />
+					<h4 class="text-center text-3xl text-white md:text-2xl">Lost</h4>
+					<div class="mb-auto mt-auto">{lostValue}</div>
+				</div>
 				<div class="no-scrollbar flex h-full flex-col overflow-y-scroll pb-10">
 					{#each displayList as lead}
 						{#if lead.Status === 'Lost'}

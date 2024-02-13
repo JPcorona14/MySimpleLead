@@ -3,6 +3,7 @@
 	import { fly } from 'svelte/transition';
 	import FaList from 'svelte-icons/fa/FaList.svelte';
 	import FaLevelUpAlt from 'svelte-icons/fa/FaLevelUpAlt.svelte';
+	import FaRegCopy from 'svelte-icons/fa/FaRegCopy.svelte';
 	import { onMount } from 'svelte';
 	import { checkLogin } from 'src/lib/CheckLogin.js';
 	import { authStore } from 'src/routes/stores/authStore.js';
@@ -13,6 +14,7 @@
 	let newActivity = false;
 	let viewActivity = false;
 	let isMobile = false;
+	let copyText = '';
 
 	onMount(() => {
 		isMobile = window.innerWidth <= 850 ? true : false;
@@ -208,6 +210,15 @@
 		}
 
 		activity[data.i].edit = false;
+	};
+
+	/**
+	 *
+	 * @param {string} e
+	 */
+	const currentCopyText = (e) => {
+		const selectedDiv = document.getElementById(e);
+		copyText = selectedDiv?.target.value;
 	};
 </script>
 
@@ -432,14 +443,21 @@
 								</li>
 								<li class={listStyle}>
 									<label class={labelStyle} for="case_number">Case Number:</label>
-									<input
-										name="case_number"
-										type="text"
-										value={lead.case_number}
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateLeadField('case_number', e.target?.value)}
-									/>
+									<div class="flex w-full md:w-1/2">
+										<input
+											name="case_number"
+											type="text"
+											value={lead.case_number}
+											class="w-full rounded-l-lg border pb-1 pl-2 pr-2 pt-1 text-end shadow-sm shadow-gray-300 md:w-3/4 md:text-start"
+											on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
+											on:blur={(e) => updateLeadField('case_number', e.target?.value)}
+										/>
+										<button
+											type="button"
+											class="w-10 rounded-r-lg bg-secondary text-white shadow-sm shadow-gray-300 active:scale-95"
+											><div class="h-6"><FaRegCopy /></div></button
+										>
+									</div>
 								</li>
 								<li class={listStyle}>
 									<label class={labelStyle} for="finance_owner">Finance Owner:</label>
