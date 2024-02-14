@@ -3,7 +3,7 @@
 	import LeadCard from './LeadCard.svelte';
 	import FaUserPlus from 'svelte-icons/fa/FaUserPlus.svelte';
 	import { onMount } from 'svelte';
-	import toast from 'svelte-french-toast';
+	import toast, { Toaster } from 'svelte-french-toast';
 	export let data;
 	export let form;
 	let customerList = data.customerList
@@ -37,6 +37,32 @@
 		residence: null,
 		occupation: null,
 		prior_charges: null
+	};
+	let leadDetails = {
+		court: null,
+		case_number: null,
+		charges: null,
+		date_of_incident: null,
+		finance_owner: null,
+		referral: null,
+		reason_for_visit: null,
+		quote: null,
+		status: null
+	};
+	/**
+	 *  @typedef {Object} FailedFields
+	 * @property {string | null} first_name
+	 * @property {string | null} last_name
+	 * @property {string | null} phone_1
+	 * @property {string | null} phone_2
+	 */
+
+	/** @type {FailedFields}*/
+	let failedField = {
+		first_name: null,
+		last_name: null,
+		phone_1: null,
+		phone_2: null
 	};
 
 	//Live should have newLead = false, newCustomer = true
@@ -252,6 +278,7 @@
 	const resetCustomer = () => {
 		customerDetails = {
 			id: 0,
+			orgid: null,
 			first_name: null,
 			last_name: null,
 			date_of_birth: null,
@@ -267,16 +294,86 @@
 		customerLoaded = false;
 	};
 
+	const resetLead = () => {
+		leadDetails = {
+			court: null,
+			case_number: null,
+			charges: null,
+			date_of_incident: null,
+			finance_owner: null,
+			referral: null,
+			reason_for_visit: null,
+			quote: null,
+			status: null
+		};
+	};
+
+	const resetErrors = () => {
+		failedField = {
+			first_name: null,
+			last_name: null,
+			phone_1: null,
+			phone_2: null
+		};
+	};
+
 	showArchived();
 	updateValue();
 
 	onMount(() => {
 		if (form?.error) {
-			toast(form.message);
+			switch (form?.message) {
+				case 'first_name':
+					failedField.first_name = 'Missing First Name';
+					toast.error(failedField.first_name);
+					break;
+				case 'last_name':
+					failedField.last_name = 'Missing Last Name';
+					toast.error(failedField.last_name);
+					break;
+				case 'Phone 1':
+					failedField.phone_1 = 'Phone Number 1 too long';
+					toast.error(failedField.phone_1);
+					break;
+				case 'Phone 2':
+					failedField.phone_2 = 'Phone Number 2 too long';
+					toast.error(failedField.phone_2);
+					break;
+			}
+			newLead = true;
+			customerDetails = {
+				id: form.data.id,
+				orgid: form.data.orgid,
+				first_name: form.data.first_name,
+				last_name: form.data.last_name,
+				date_of_birth: form.data.date_of_birth,
+				email: form.data.email,
+				phone_1: form.data.phone_1,
+				phone_2: form.data.phone_2,
+				relationship: form.data.relationship,
+				residence: form.data.residence,
+				occupation: form.data.occupation,
+				prior_charges: form.data.prior_charges
+			};
+
+			console.log(customerDetails.relationship);
+
+			leadDetails = {
+				court: form.data.court,
+				case_number: form.data.case_number,
+				charges: form.data.charges,
+				date_of_incident: form.data.date_of_incident,
+				finance_owner: form.data.finance_owner,
+				referral: form.data.referral,
+				reason_for_visit: form.data.reason_for_visit,
+				quote: form.data.quote,
+				status: form.data.status
+			};
 		}
 	});
 </script>
 
+<Toaster />
 <div
 	class={`ml-auto mr-auto flex h-full w-[90%] flex-col justify-center md:ml-0 md:mr-0 md:w-full `}
 >
@@ -315,9 +412,9 @@
 		<!-- New Leads -->
 		<ul class={containerStyle} on:drop={(e) => assignedDrop(e, 'New Lead')} on:dragover={dragOver}>
 			<div class="flex justify-evenly">
-				<div />
+				<div class="w-1/5" />
 				<h4 class={containerTitleStyle}>New Leads</h4>
-				<div class="mb-auto mt-auto">{newLeadsValue}</div>
+				<div class="mb-auto mt-auto w-1/5 text-end">{newLeadsValue}</div>
 			</div>
 			<div class="flex h-full flex-col">
 				{#each displayList as lead (lead.id)}
@@ -341,9 +438,9 @@
 			on:dragover={dragOver}
 		>
 			<div class="flex justify-evenly">
-				<div />
+				<div class="w-1/5" />
 				<h4 class={containerTitleStyle}>Contacted</h4>
-				<div class="mb-auto mt-auto">{contactedValue}</div>
+				<div class="mb-auto mt-auto w-1/5 text-end">{contactedValue}</div>
 			</div>
 			<div class="flex h-full flex-col">
 				{#each displayList as lead (lead.id)}
@@ -366,9 +463,9 @@
 			on:dragover={dragOver}
 		>
 			<div class="flex justify-evenly">
-				<div />
+				<div class="w-1/5" />
 				<h4 class={containerTitleStyle}>Quoted</h4>
-				<div class="mb-auto mt-auto">{quotedValue}</div>
+				<div class="mb-auto mt-auto w-1/5 text-end">{quotedValue}</div>
 			</div>
 			<div class="flex h-full flex-col">
 				{#each displayList as lead}
@@ -400,9 +497,9 @@
 				on:dragover={dragOver}
 			>
 				<div class="flex justify-evenly text-white">
-					<div />
+					<div class="w-1/5" />
 					<h4 class="text-center text-3xl text-white md:text-2xl">Won</h4>
-					<div class="mb-auto mt-auto">{wonValue}</div>
+					<div class="mb-auto mt-auto w-1/5 text-end">{wonValue}</div>
 				</div>
 				<div class="no-scrollbar flex h-full flex-col overflow-y-scroll pb-10">
 					{#each displayList as lead}
@@ -428,9 +525,9 @@
 				on:dragover={dragOver}
 			>
 				<div class="flex justify-evenly text-white">
-					<div />
+					<div class="w-1/5" />
 					<h4 class="text-center text-3xl text-white md:text-2xl">Lost</h4>
-					<div class="mb-auto mt-auto">{lostValue}</div>
+					<div class="mb-auto mt-auto w-1/5 text-end">{lostValue}</div>
 				</div>
 				<div class="no-scrollbar flex h-full flex-col overflow-y-scroll pb-10">
 					{#each displayList as lead}
@@ -462,7 +559,12 @@
 				<div class="h-10 w-10"></div>
 				<div class="text-center text-3xl font-bold text-white">New Lead</div>
 				<button
-					on:click={() => (newLead = false)}
+					on:click={() => {
+						newLead = false;
+						resetCustomer();
+						resetLead();
+						resetErrors();
+					}}
 					class="h-10 w-10 rounded-full bg-bad text-white hover:bg-bad/75 active:scale-95"
 					><div>X</div></button
 				>
@@ -539,6 +641,9 @@
 							value={customerDetails.first_name ?? ''}
 						/>
 					</li>
+					{#if failedField.first_name}
+						<p class="-mt-2 pr-5 text-end text-red-600">{failedField.first_name}</p>
+					{/if}
 					<li class={nlLIStyle}>
 						<label for="last_name" class={nlLabelStyle}>Last Name:</label>
 						<input
@@ -548,6 +653,9 @@
 							value={customerDetails.last_name ?? ''}
 						/>
 					</li>
+					{#if failedField.last_name}
+						<p class="-mt-2 pr-5 text-end text-red-600">{failedField.last_name}</p>
+					{/if}
 					<li class={nlLIStyle}>
 						<label for="date_of_birth" class={nlLabelStyle}>DOB:</label>
 						<input
@@ -575,6 +683,9 @@
 							value={customerDetails.phone_1 ?? ''}
 						/>
 					</li>
+					{#if failedField.phone_1}
+						<p class="-mt-2 pr-5 text-end text-red-600">{failedField.phone_1}</p>
+					{/if}
 					<li class={nlLIStyle}>
 						<label for="phone_2" class={nlLabelStyle}>Phone 2:</label>
 						<input
@@ -584,13 +695,16 @@
 							value={customerDetails.phone_2 ?? ''}
 						/>
 					</li>
+					{#if failedField.phone_2}
+						<p class="-mt-2 pr-5 text-end text-red-600">{failedField.phone_2}</p>
+					{/if}
 					<li class={nlLIStyle}>
 						<label for="relationship" class={nlLabelStyle}>Relationship Status:</label>
 						<select
 							name="relationship"
 							class={`${customerLoaded ? nlInputCustomerLoaded : nlInputStyle} text-center`}
 						>
-							<option value="null" selected={customerDetails.relationship === null ? true : false}
+							<option value="null" selected={customerDetails.relationship === 'null' ? true : false}
 								>-</option
 							>
 							<option value="true" selected={customerDetails.relationship ? true : false}
@@ -635,44 +749,83 @@
 				<ul class={nlULStyle}>
 					<li class={nlLIStyle}>
 						<label for="court" class={nlLabelStyle}>Court:</label>
-						<input name="court" type="text" class={nlInputStyle} />
+						<input name="court" type="text" class={nlInputStyle} value={leadDetails.court ?? ''} />
 					</li>
 					<li class={nlLIStyle}>
 						<label for="case_number" class={nlLabelStyle}>Case Number:</label>
-						<input name="case_number" type="text" class={nlInputStyle} />
+						<input
+							name="case_number"
+							type="text"
+							class={nlInputStyle}
+							value={leadDetails.case_number ?? ''}
+						/>
 					</li>
 					<li class={nlLIStyle}>
 						<label for="charges" class={nlLabelStyle}>Charges:</label>
-						<input name="charges" type="text" class={nlInputStyle} />
+						<input
+							name="charges"
+							type="text"
+							class={nlInputStyle}
+							value={leadDetails.charges ?? ''}
+						/>
 					</li>
 					<li class={nlLIStyle}>
 						<label for="date_of_incident" class={nlLabelStyle}>Date of Incident:</label>
-						<input name="date_of_incident" type="date" class={nlInputStyle} />
+						<input
+							name="date_of_incident"
+							type="date"
+							class={nlInputStyle}
+							value={leadDetails.date_of_incident ?? ''}
+						/>
 					</li>
 					<li class={nlLIStyle}>
 						<label for="finance_owner" class={nlLabelStyle}>Finance Owner:</label>
-						<input name="finance_owner" type="text" class={nlInputStyle} />
+						<input
+							name="finance_owner"
+							type="text"
+							class={nlInputStyle}
+							value={leadDetails.finance_owner ?? ''}
+						/>
 					</li>
 					<li class={nlLIStyle}>
 						<label for="referral" class={nlLabelStyle}>Referral:</label>
-						<input name="referral" type="text" class={nlInputStyle} />
+						<input
+							name="referral"
+							type="text"
+							class={nlInputStyle}
+							value={leadDetails.referral ?? ''}
+						/>
 					</li>
 					<li class={nlLIStyle}>
 						<label for="reason_for_visit" class={nlLabelStyle}>Reason for Visit:</label>
-						<input name="reason_for_visit" type="text" class={nlInputStyle} />
+						<input
+							name="reason_for_visit"
+							type="text"
+							class={nlInputStyle}
+							value={leadDetails.reason_for_visit ?? ''}
+						/>
 					</li>
 					<li class={nlLIStyle}>
 						<label for="quote" class={nlLabelStyle}>Quote:</label>
-						<input name="quote" type="text" class={nlInputStyle} />
+						<input name="quote" type="text" class={nlInputStyle} value={leadDetails.quote ?? ''} />
 					</li>
 					<li class={nlLIStyle}>
 						<label for="status" class={nlLabelStyle}>Lead Status:</label>
 						<select name="status" class={nlInputStyle}>
-							<option value="New Lead" selected>New Lead</option>
-							<option value="Contacted">Contacted</option>
-							<option value="Quoted">Quoted</option>
-							<option value="Won">Won</option>
-							<option value="Lost">Lost</option>
+							<option value="New Lead" selected={leadDetails.status === 'New Lead' ? true : false}
+								>New Lead</option
+							>
+							<option value="Contacted" selected={leadDetails.status === 'Contacted' ? true : false}
+								>Contacted</option
+							>
+							<option value="Quoted" selected={leadDetails.status === 'Quoted' ? true : false}
+								>Quoted</option
+							>
+							<option value="Won" selected={leadDetails.status === 'won' ? true : false}>Won</option
+							>
+							<option value="Lost" selected={leadDetails.status === 'Lost' ? true : false}
+								>Lost</option
+							>
 						</select>
 					</li>
 				</ul>

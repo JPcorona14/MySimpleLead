@@ -3,7 +3,6 @@ import { sql } from 'src/db/postgresql.server';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
-	console.log('No Locals from Leads Page: ' + JSON.stringify(locals?.user));
 	if (!locals?.user) {
 		throw redirect(301, '/Login');
 	}
@@ -47,6 +46,24 @@ export const actions = {
 		const uid = locals.user.uid;
 		const existingCustomer = data.existingCustomer === 'true' ? true : false;
 
+		/**
+		 * @typedef {object} NewCustomer
+		 * @property {string} orgid
+		 * @property {string} created_by
+		 * @property {string} first_name
+		 * @property {string} last_name
+		 * @property {string} email
+		 * @property {string} phone_1
+		 * @property {string} phone_2
+		 * @property {string} date_of_birth
+		 * @property {string} occupation
+		 * @property {string} residence
+		 * @property {string} relationship
+		 * @property {string} prior_charges
+		 *
+		 */
+
+		/**@type {NewCustomer} */
 		let addCustomer;
 		let newCustomer;
 
@@ -54,8 +71,8 @@ export const actions = {
 			newCustomer = {
 				orgid,
 				created_by: uid,
-				first_name: data.first_name,
-				last_name: data.last_name,
+				first_name: data.first_name === '' ? null : data.first_name,
+				last_name: data.last_name === '' ? null : data.last_name,
 				email: data.email || null,
 				phone_1: data.phone_1 || null,
 				phone_2: data.phone_2 || null,
@@ -86,8 +103,8 @@ export const actions = {
 				//Need to have this return the data back and fill in the fields so the user doesn't have to enter them again
 				//Need to also add in a pop up notification system to let the user know that the lead could not be enterred
 				//Will also need to make it so that the field with the error shows what the error was about
-				console.log(err);
-				return { error: true, message: err.message, data };
+				console.log(err.column_name);
+				return { error: true, message: err.column_name, data };
 			}
 		}
 
