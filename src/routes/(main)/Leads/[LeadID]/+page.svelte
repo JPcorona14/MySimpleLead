@@ -16,9 +16,17 @@
 	let isMobile = false;
 	let copyText = '';
 
+	const autoResize = (textarea) => {
+		// Reset textarea height to auto (to shrink back when deleting text)
+		textarea.style.height = 'auto';
+		// Set the height to the scroll height to remove the scrollbar
+		textarea.style.height = textarea.scrollHeight + 'px';
+	};
+
 	onMount(() => {
 		isMobile = window.innerWidth <= 850 ? true : false;
-		checkLogin($authStore.orgid);
+		// checkLogin($authStore.orgid);
+		autoResize(document.getElementById('chargesTextArea'));
 	});
 
 	const listStyle = 'mt-2 md:mb-2 mb-4 md:w-1/2 w-full flex md:flex-row flex-col justify-start';
@@ -233,17 +241,21 @@
 				>
 				<div class="mt-5 flex flex-col md:mt-0">
 					<h1 class="text-center text-5xl font-bold">{contact.first_name} {contact.last_name}</h1>
-					<h3 class="mt-5 text-wrap text-center text-2xl">{lead.charges}</h3>
+					<h3
+						class="ml-auto mr-auto mt-5 whitespace-pre-line text-wrap text-center text-2xl md:w-3/4"
+					>
+						{lead.charges}
+					</h3>
 					<button
 						on:click={() => updateLeadField('archive', !lead.archive)}
-						class={`${lead.archive ? 'bg-main' : 'bg-bad'} ml-auto mr-auto mt-10 h-10 w-48 rounded-lg text-xl font-bold text-white`}
+						class={`${lead.archive ? 'bg-main' : 'bg-bad'} ml-auto mr-auto mt-10 h-10 w-48 rounded-lg text-xl font-bold text-white shadow-md shadow-gray-500`}
 						>{lead.archive ? 'Restore' : 'Archive'}</button
 					>
 				</div>
 				<div class="mb-auto flex flex-col justify-start md:mr-10 md:w-12">
 					<div class="mb-5 flex justify-end">
 						<select
-							class="ml-auto mr-auto w-1/2 rounded-lg border bg-main p-1 pl-5 pr-5 text-center text-2xl font-bold text-white md:w-fit"
+							class="ml-auto mr-auto w-1/2 rounded-lg border border-none bg-main p-1 pl-5 pr-5 text-center text-2xl font-bold text-white shadow-md shadow-gray-500 md:w-fit"
 							on:change={(e) => updateLeadField('status', e.target?.value)}
 						>
 							<option value="New Lead" selected={lead.status === 'New Lead' ? true : false}
@@ -285,9 +297,9 @@
 						>
 							Client Information
 						</div>
-						<form class="m-10 flex text-xl md:w-full md:justify-center">
+						<form class="m-5 flex text-xl md:w-full md:justify-center">
 							<ul
-								class="flex w-full flex-col md:ml-auto md:mr-auto md:w-3/4 md:flex-row md:flex-wrap"
+								class="flex w-full flex-col md:ml-auto md:mr-auto md:w-full md:flex-row md:flex-wrap"
 							>
 								<li class={listStyle}>
 									<label class={labelStyle} for="first_name">First Name:</label>
@@ -296,6 +308,7 @@
 										type="text"
 										value={contact.first_name}
 										class={inputStyle}
+										placeholder="-"
 										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
 										on:blur={(e) => updateCustomerField('first_name', e.target?.value)}
 									/>
@@ -307,6 +320,7 @@
 										type="text"
 										value={contact.date_of_birth}
 										class={inputStyle}
+										placeholder="-"
 										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
 										on:blur={(e) => updateCustomerField('date_of_birth', e.target?.value)}
 									/>
@@ -317,6 +331,7 @@
 										name="last_name"
 										type="text"
 										value={contact.last_name}
+										placeholder="-"
 										class={inputStyle}
 										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
 										on:blur={(e) => updateCustomerField('last_name', e.target?.value)}
@@ -328,6 +343,7 @@
 										name="occupation"
 										type="text"
 										value={contact.occupation}
+										placeholder="-"
 										class={inputStyle}
 										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
 										on:blur={(e) => updateCustomerField('occupation', e.target?.value)}
@@ -339,6 +355,7 @@
 										name="email"
 										type="text"
 										value={contact.email}
+										placeholder="-"
 										class={inputStyle}
 										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
 										on:blur={(e) => updateCustomerField('email', e.target?.value)}
@@ -350,6 +367,7 @@
 										name="residence"
 										type="text"
 										value={contact.residence}
+										placeholder="-"
 										class={inputStyle}
 										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
 										on:blur={(e) => updateCustomerField('residence', e.target?.value)}
@@ -361,6 +379,7 @@
 										name="phone_1"
 										type="text"
 										value={contact.phone_1}
+										placeholder="-"
 										class={inputStyle}
 										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
 										on:blur={(e) => updateCustomerField('phone_1', e.target?.value)}
@@ -391,6 +410,7 @@
 										name="phone_2"
 										type="text"
 										value={contact.phone_2}
+										placeholder="-"
 										class={inputStyle}
 										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
 										on:blur={(e) => updateCustomerField('phone_2', e.target?.value)}
@@ -412,12 +432,12 @@
 					</section>
 					<section>
 						<div
-							class="mt-20 w-full rounded-lg bg-main pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
+							class="mt-10 w-full rounded-lg bg-main pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
 						>
 							Case Details
 						</div>
-						<form class="m-10 flex justify-center text-xl md:w-full">
-							<ul class="ml-auto mr-auto flex w-full flex-wrap md:w-3/4">
+						<form class="m-5 flex justify-center text-xl md:w-full">
+							<ul class="ml-auto mr-auto flex w-full flex-wrap md:w-full">
 								<li class={listStyle}>
 									<label class={labelStyle} for="court">Court:</label>
 									<input
@@ -447,14 +467,15 @@
 										<input
 											name="case_number"
 											type="text"
-											value={lead.case_number}
+											bind:value={lead.case_number}
 											class="w-full rounded-l-lg border pb-1 pl-2 pr-2 pt-1 text-end shadow-sm shadow-gray-300 md:w-3/4 md:text-start"
 											on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
 											on:blur={(e) => updateLeadField('case_number', e.target?.value)}
 										/>
 										<button
 											type="button"
-											class="w-10 rounded-r-lg bg-secondary text-white shadow-sm shadow-gray-300 active:scale-95"
+											on:click={() => navigator.clipboard.writeText(lead.case_number)}
+											class="w-1/4 rounded-r-lg bg-secondary text-white shadow-sm shadow-gray-300 hover:bg-secondary/75 active:scale-95"
 											><div class="h-6"><FaRegCopy /></div></button
 										>
 									</div>
@@ -473,10 +494,13 @@
 								<li class={listStyle}>
 									<label class={labelStyle} for="charges">Charges:</label>
 									<textarea
+										id="chargesTextArea"
 										name="charges"
+										on:input={(e) => autoResize(document.getElementById('chargesTextArea'))}
 										value={lead.charges}
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
+										rows="1"
+										class=" w-full rounded-lg border pb-1 pl-2 pr-2 pt-1 text-end shadow-sm shadow-gray-300 md:w-1/2 md:text-start"
+										on:keydown={(e) => (e.keyCode === 13 && !e.shiftKey ? e.target?.blur() : '')}
 										on:blur={(e) => updateLeadField('charges', e.target?.value)}
 									/>
 								</li>
@@ -712,8 +736,11 @@
 								</div>
 								<lable for="text" hidden />
 								<textarea
+									id="newCommentTextArea"
 									name="text"
 									placeholder="Type here..."
+									rows="2"
+									on:input={() => autoResize(document.getElementById('newCommentTextArea'))}
 									on:keypress={(e) => {
 										if (e.keyCode === 13 && !e.shiftKey) {
 											e.target.blur();
@@ -721,7 +748,7 @@
 											submitNote.click();
 										}
 									}}
-									class="min-h-14 w-full"
+									class="min-h-14 w-full p-1"
 								/>
 							</li>
 						</form>
@@ -738,7 +765,7 @@
 							{#if !a.edit}
 								<div class="flex justify-between">
 									<div class="font-bold">{a.type}:</div>
-									<div>{a.created_at}</div>
+									<div class=" italic">{a.created_at}</div>
 								</div>
 
 								<p class=" whitespace-pre-line">{a.text}</p>
