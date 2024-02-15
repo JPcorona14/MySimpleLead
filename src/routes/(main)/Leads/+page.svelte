@@ -638,7 +638,7 @@
 							name="first_name"
 							type="text"
 							class={customerLoaded ? nlInputCustomerLoaded : nlInputStyle}
-							value={customerDetails.first_name ?? ''}
+							value={customerDetails.first_name ?? null}
 						/>
 					</li>
 					{#if failedField.first_name}
@@ -650,7 +650,7 @@
 							name="last_name"
 							type="text"
 							class={customerLoaded ? nlInputCustomerLoaded : nlInputStyle}
-							value={customerDetails.last_name ?? ''}
+							value={customerDetails.last_name ?? null}
 						/>
 					</li>
 					{#if failedField.last_name}
@@ -662,7 +662,7 @@
 							name="date_of_birth"
 							type="date"
 							class={customerLoaded ? nlInputCustomerLoaded : nlInputStyle}
-							value={customerDetails.date_of_birth ?? ''}
+							value={customerDetails.date_of_birth ?? null}
 						/>
 					</li>
 					<li class={nlLIStyle}>
@@ -671,7 +671,7 @@
 							name="email"
 							type="text"
 							class={customerLoaded ? nlInputCustomerLoaded : nlInputStyle}
-							value={customerDetails.email ?? ''}
+							value={customerDetails.email ?? null}
 						/>
 					</li>
 					<li class={nlLIStyle}>
@@ -680,7 +680,7 @@
 							name="phone_1"
 							type="text"
 							class={customerLoaded ? nlInputCustomerLoaded : nlInputStyle}
-							value={customerDetails.phone_1 ?? ''}
+							value={customerDetails.phone_1 ?? null}
 						/>
 					</li>
 					{#if failedField.phone_1}
@@ -692,7 +692,7 @@
 							name="phone_2"
 							type="text"
 							class={customerLoaded ? nlInputCustomerLoaded : nlInputStyle}
-							value={customerDetails.phone_2 ?? ''}
+							value={customerDetails.phone_2 ?? null}
 						/>
 					</li>
 					{#if failedField.phone_2}
@@ -721,7 +721,7 @@
 							name="residence"
 							type="text"
 							class={customerLoaded ? nlInputCustomerLoaded : nlInputStyle}
-							value={customerDetails.residence ?? ''}
+							value={customerDetails.residence ?? null}
 						/>
 					</li>
 					<li class={nlLIStyle}>
@@ -730,7 +730,7 @@
 							name="occupation"
 							type="text"
 							class={customerLoaded ? nlInputCustomerLoaded : nlInputStyle}
-							value={customerDetails.occupation ?? ''}
+							value={customerDetails.occupation ?? null}
 						/>
 					</li>
 					<li class={nlLIStyle}>
@@ -739,7 +739,7 @@
 							name="prior_charges"
 							type="text"
 							class={customerLoaded ? nlInputCustomerLoaded : nlInputStyle}
-							value={customerDetails.prior_charges ?? ''}
+							value={customerDetails.prior_charges ?? null}
 						/>
 					</li>
 				</ul>
@@ -749,7 +749,12 @@
 				<ul class={nlULStyle}>
 					<li class={nlLIStyle}>
 						<label for="court" class={nlLabelStyle}>Court:</label>
-						<input name="court" type="text" class={nlInputStyle} value={leadDetails.court ?? ''} />
+						<input
+							name="court"
+							type="text"
+							class={nlInputStyle}
+							value={leadDetails.court ?? null}
+						/>
 					</li>
 					<li class={nlLIStyle}>
 						<label for="case_number" class={nlLabelStyle}>Case Number:</label>
@@ -757,7 +762,7 @@
 							name="case_number"
 							type="text"
 							class={nlInputStyle}
-							value={leadDetails.case_number ?? ''}
+							value={leadDetails.case_number ?? null}
 						/>
 					</li>
 					<li class={nlLIStyle}>
@@ -766,7 +771,7 @@
 							name="charges"
 							type="text"
 							class={nlInputStyle}
-							value={leadDetails.charges ?? ''}
+							value={leadDetails.charges ?? null}
 						/>
 					</li>
 					<li class={nlLIStyle}>
@@ -775,7 +780,7 @@
 							name="date_of_incident"
 							type="date"
 							class={nlInputStyle}
-							value={leadDetails.date_of_incident ?? ''}
+							value={leadDetails.date_of_incident ?? null}
 						/>
 					</li>
 					<li class={nlLIStyle}>
@@ -784,7 +789,7 @@
 							name="finance_owner"
 							type="text"
 							class={nlInputStyle}
-							value={leadDetails.finance_owner ?? ''}
+							value={leadDetails.finance_owner ?? null}
 						/>
 					</li>
 					<li class={nlLIStyle}>
@@ -793,7 +798,7 @@
 							name="referral"
 							type="text"
 							class={nlInputStyle}
-							value={leadDetails.referral ?? ''}
+							value={leadDetails.referral ?? null}
 						/>
 					</li>
 					<li class={nlLIStyle}>
@@ -802,12 +807,17 @@
 							name="reason_for_visit"
 							type="text"
 							class={nlInputStyle}
-							value={leadDetails.reason_for_visit ?? ''}
+							value={leadDetails.reason_for_visit ?? null}
 						/>
 					</li>
 					<li class={nlLIStyle}>
 						<label for="quote" class={nlLabelStyle}>Quote:</label>
-						<input name="quote" type="text" class={nlInputStyle} value={leadDetails.quote ?? ''} />
+						<input
+							name="quote"
+							type="text"
+							class={nlInputStyle}
+							value={leadDetails.quote ?? null}
+						/>
 					</li>
 					<li class={nlLIStyle}>
 						<label for="status" class={nlLabelStyle}>Lead Status:</label>
