@@ -186,7 +186,7 @@
 			<section class="mb-10 mt-10 flex flex-col-reverse justify-between md:mt-10 md:flex-row">
 				<a
 					href="../Leads"
-					class=" ml-10 hidden h-12 w-12 justify-center rounded-full bg-main text-3xl text-white no-underline shadow-md shadow-gray-500 hover:bg-main/75 active:scale-95 md:visible md:flex"
+					class=" bg-main hover:bg-main/75 ml-10 hidden h-12 w-12 justify-center rounded-full text-3xl text-white no-underline shadow-md shadow-gray-500 active:scale-95 md:visible md:flex"
 					><div class="mb-auto mt-auto">&lt;</div></a
 				>
 				<div class="mt-5 flex flex-col md:mt-0">
@@ -211,7 +211,7 @@
 				<div class="mb-auto flex flex-col justify-start md:mr-10 md:w-12">
 					<div class="mb-5 flex justify-end">
 						<select
-							class="ml-auto mr-auto w-1/2 rounded-lg border border-none bg-main p-1 pl-5 pr-5 text-center text-2xl font-bold text-white shadow-md shadow-gray-500 md:w-fit"
+							class="bg-main ml-auto mr-auto w-1/2 rounded-lg border border-none p-1 pl-5 pr-5 text-center text-2xl font-bold text-white shadow-md shadow-gray-500 md:w-fit"
 							on:change={(e) => updateLeadField('status', e.target?.value)}
 						>
 							<option value="New Lead" selected={lead.status === 'New Lead' ? true : false}
@@ -240,7 +240,7 @@
 				<div class="flex w-full justify-end md:hidden">
 					<button
 						on:click={() => (viewActivity = true)}
-						class="mb-5 mr-4 h-16 w-16 rounded-full bg-main text-white shadow-md shadow-gray-500"
+						class="bg-main mb-5 mr-4 h-16 w-16 rounded-full text-white shadow-md shadow-gray-500"
 						><div class="ml-auto mr-auto h-8 w-8"><FaList /></div></button
 					>
 				</div>
@@ -249,7 +249,7 @@
 				<div class="w-full">
 					<section class="w-full">
 						<div
-							class="w-full rounded-lg bg-main pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
+							class="bg-main w-full rounded-lg pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
 						>
 							Client Information
 						</div>
@@ -357,7 +357,7 @@
 					</section>
 					<section>
 						<div
-							class="mt-10 w-full rounded-lg bg-main pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
+							class="bg-main mt-10 w-full rounded-lg pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
 						>
 							Case Details
 						</div>
@@ -370,6 +370,7 @@
 									fieldName={'court'}
 									displayName={'Court'}
 									currentValue={lead.court}
+									order="order-1"
 								/>
 								<LeadIdInputField
 									copyField={true}
@@ -378,6 +379,7 @@
 									fieldName={'case_number'}
 									displayName={'Case Number'}
 									currentValue={lead.case_number}
+									order="order-2"
 								/>
 								<LeadIdInputField
 									copyField={false}
@@ -386,6 +388,7 @@
 									fieldName={'finance_owner'}
 									displayName={'Finance Owner'}
 									currentValue={lead.finance_owner}
+									order="order-3"
 								/>
 								<LeadIdInputField
 									copyField={false}
@@ -394,6 +397,7 @@
 									fieldName={'referral'}
 									displayName={'Referral'}
 									currentValue={lead.referral}
+									order="order-4"
 								/>
 								<LeadIdInputField
 									copyField={false}
@@ -402,6 +406,7 @@
 									fieldName={'date_of_incident'}
 									displayName={'Incident Date'}
 									currentValue={lead.date_of_incident}
+									order="order-5"
 								/>
 
 								<LeadIdDropDownField
@@ -417,6 +422,7 @@
 										{ name: 'Prior Resident', value: 'Prior Resident' },
 										{ name: 'Passing Through', value: 'Passing Through' }
 									]}
+									order="order-6"
 								/>
 								<LeadIdInputField
 									fieldType="lead"
@@ -424,6 +430,7 @@
 									fieldName="current_attorney"
 									displayName="Current Attorney"
 									currentValue={lead.current_attorney}
+									order="order-7"
 								/>
 								<LeadIdInputField
 									fieldType="lead"
@@ -431,13 +438,7 @@
 									fieldName="next_court_date"
 									displayName="Next Court Date"
 									currentValue={lead.next_court_date}
-								/>
-								<LeadIdInputField
-									fieldType="lead"
-									fieldID={lead.id}
-									fieldName="npr"
-									displayName="NPR"
-									currentValue={lead.npr}
+									order="order-8"
 								/>
 								<LeadIdInputField
 									fieldType="lead"
@@ -445,6 +446,15 @@
 									fieldName="next_court_reason"
 									displayName="Next Court Reason"
 									currentValue={lead.next_court_reason}
+									order="order-9 md:order-10"
+								/>
+								<LeadIdInputField
+									fieldType="lead"
+									fieldID={lead.id}
+									fieldName="npr"
+									displayName="NPR"
+									currentValue={lead.npr}
+									order="order-10 md:order-9"
 								/>
 								<LeadIdInputField
 									fieldType="lead"
@@ -452,6 +462,7 @@
 									fieldName="financial_affidavit"
 									displayName="Financial Affidavit"
 									currentValue={lead.financial_affidavit}
+									order="order-11"
 								/>
 							</ul>
 						</form>
@@ -471,13 +482,13 @@
 			<div class="ml-5 mt-5 h-fit">
 				<button
 					on:click={() => (viewActivity = false)}
-					class="h-8 w-14 rounded-full bg-main text-white"
+					class="bg-main h-8 w-14 rounded-full text-white"
 				>
 					<div class="h-6 rotate-[270deg]"><FaLevelUpAlt /></div>
 				</button>
 			</div>
 			<div
-				class=" ml-4 mr-4 mt-5 h-fit rounded-lg bg-main text-center text-xl font-bold text-white shadow-md shadow-gray-500 md:mt-10"
+				class=" bg-main ml-4 mr-4 mt-5 h-fit rounded-lg text-center text-xl font-bold text-white shadow-md shadow-gray-500 md:mt-10"
 			>
 				Activity
 			</div>
@@ -503,7 +514,7 @@
 				<li class="m-1 flex justify-center">
 					<button
 						on:click={() => filterActivity('X')}
-						class="mb-2 mt-4 w-3/4 rounded-lg bg-bad pb-1 pl-2 pr-2 pt-1 text-white shadow-md shadow-gray-500 hover:bg-bad/75 active:scale-95 md:mb-0 md:mt-0 md:w-fit"
+						class="bg-bad hover:bg-bad/75 mb-2 mt-4 w-3/4 rounded-lg pb-1 pl-2 pr-2 pt-1 text-white shadow-md shadow-gray-500 active:scale-95 md:mb-0 md:mt-0 md:w-fit"
 						>X</button
 					>
 				</li>
@@ -535,7 +546,7 @@
 								</select>
 								<button
 									id="submitNote"
-									class="mb-2 w-1/3 rounded-lg bg-good pb-1 pt-1 font-bold text-white hover:bg-good/75 active:scale-95"
+									class="bg-good hover:bg-good/75 mb-2 w-1/3 rounded-lg pb-1 pt-1 font-bold text-white active:scale-95"
 									>Save</button
 								>
 							</div>
@@ -582,13 +593,13 @@
 				<div class="ml-5 mt-5 md:hidden">
 					<button
 						on:click={() => (viewActivity = false)}
-						class="h-8 w-14 rounded-full bg-main text-white"
+						class="bg-main h-8 w-14 rounded-full text-white"
 					>
 						<div class="h-6 rotate-[270deg]"><FaLevelUpAlt /></div>
 					</button>
 				</div>
 				<div
-					class=" ml-4 mr-4 mt-5 rounded-lg bg-main text-center text-xl font-bold text-white shadow-md shadow-gray-500 md:mt-10"
+					class=" bg-main ml-4 mr-4 mt-5 rounded-lg text-center text-xl font-bold text-white shadow-md shadow-gray-500 md:mt-10"
 				>
 					Activity
 				</div>
@@ -614,7 +625,7 @@
 					<li class="m-1 flex justify-center">
 						<button
 							on:click={() => filterActivity('X')}
-							class="mb-2 mt-4 w-3/4 rounded-lg bg-bad pb-1 pl-2 pr-2 pt-1 text-white shadow-md shadow-gray-500 hover:bg-bad/75 active:scale-95 md:mb-0 md:mt-0 md:w-fit"
+							class="bg-bad hover:bg-bad/75 mb-2 mt-4 w-3/4 rounded-lg pb-1 pl-2 pr-2 pt-1 text-white shadow-md shadow-gray-500 active:scale-95 md:mb-0 md:mt-0 md:w-fit"
 							>X</button
 						>
 					</li>
@@ -646,7 +657,7 @@
 									</select>
 									<button
 										id="submitNote"
-										class="mb-2 w-1/3 rounded-lg bg-good pb-1 pt-1 font-bold text-white hover:bg-good/75 active:scale-95"
+										class="bg-good hover:bg-good/75 mb-2 w-1/3 rounded-lg pb-1 pt-1 font-bold text-white active:scale-95"
 										>Save</button
 									>
 								</div>
@@ -724,7 +735,7 @@
 									/>
 									<button
 										type="submit"
-										class="mb-2 mt-2 w-full rounded-md bg-good pb-1 pt-1 text-white shadow-md shadow-gray-500 active:scale-95"
+										class="bg-good mb-2 mt-2 w-full rounded-md pb-1 pt-1 text-white shadow-md shadow-gray-500 active:scale-95"
 										>Save</button
 									>
 								</form>
@@ -749,7 +760,7 @@
 											<button
 												type="button"
 												on:click={() => (a.edit = true)}
-												class="h-full w-full rounded-md bg-good pb-1 pt-1 text-white shadow-md shadow-gray-500"
+												class="bg-good h-full w-full rounded-md pb-1 pt-1 text-white shadow-md shadow-gray-500"
 												>Edit</button
 											>
 										{/if}
@@ -758,7 +769,7 @@
 										<label for="id" hidden />
 										<input name="id" value={a.id} hidden />
 										<button
-											class="h-full w-full rounded-md bg-bad pb-1 pt-1 text-white shadow-md shadow-gray-500"
+											class="bg-bad h-full w-full rounded-md pb-1 pt-1 text-white shadow-md shadow-gray-500"
 											>Delete</button
 										>
 									</form>
