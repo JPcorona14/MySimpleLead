@@ -11,7 +11,8 @@ const config = {
 		alias: {
 			src: './src',
 			assets: './src/lib/assets',
-			$stores: 'src/routes/stores'
+			$stores: 'src/routes/stores',
+			'@/*': './path/to/lib/*'
 		}
 	},
 	preprocess: vitePreprocess()

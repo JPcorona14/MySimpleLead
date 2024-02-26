@@ -54,6 +54,7 @@ export async function load({ params, locals }) {
 				c.occupation,
 				c.relationship, 
 				c.prior_charges, 
+				l.id as lead_id,
 				l.finance_owner, 
 				l.referral, 
 				l.court, 
@@ -63,6 +64,11 @@ export async function load({ params, locals }) {
 				l.charges, 
 				l.status, 
 				l.reason_for_visit,
+				l.current_attorney,
+				l.next_court_date,
+				l.next_court_reason,
+				l.npr,
+				l.financial_affidavit,
 				l.archive
 			from leads l 
 			left join customers c on l.customer_id = c.id 
@@ -101,6 +107,7 @@ export async function load({ params, locals }) {
 		prior_charges: leads.prior_charges
 	};
 	const lead = {
+		id: leads.lead_id,
 		finance_owner: leads.finance_owner,
 		referral: leads.referral,
 		court: leads.court,
@@ -110,6 +117,11 @@ export async function load({ params, locals }) {
 		charges: leads.charges,
 		status: leads.status,
 		reason_for_visit: leads.reason_for_visit,
+		next_court_date: leads.next_court_date,
+		next_court_reason: leads.next_court_reason,
+		current_attorney: leads.current_attorney,
+		npr: leads.npr,
+		financial_affidavit: leads.financial_affidavit,
 		archive: leads.archive
 	};
 	const activity = leadActivity.map((e) => {

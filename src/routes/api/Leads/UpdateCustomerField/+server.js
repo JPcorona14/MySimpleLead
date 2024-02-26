@@ -5,6 +5,7 @@ export async function POST({ request }) {
 	const data = await request.json();
 
 	let updates;
+	let isDate = false;
 
 	if (data.fieldName === 'date_of_birth') {
 		//Need to convert Dat of Birth to proper format first
@@ -17,6 +18,7 @@ export async function POST({ request }) {
 		updates = {
 			date_of_birth: dob
 		};
+		isDate = true;
 	} else if (data.fieldName === 'relationship') {
 		updates = {
 			relationship: data.value === 'true' ? true : data.value === 'false' ? false : null
@@ -27,12 +29,25 @@ export async function POST({ request }) {
 		};
 	}
 
-	const updatedField = await sql`
+	let updatedField = await sql`
 	update customers 
 	set ${sql(updates, data.fieldName)}
 	where id = ${data.id}
 	returning *
   `;
+
+	if (updatedField.length && isDate) {
+		updatedField = updatedField.map((e) => {
+			const date = new Date(e.date_of_birth);
+
+			const formattedDate = date.toISOString();
+			const month = Number(formattedDate.substring(5, 7));
+			const day = Number(formattedDate.slice(8, 10));
+			const year = formattedDate.substring(0, 4);
+
+			return { ...e, date_of_birth: `${month}/${day}/${year}` };
+		});
+	}
 
 	if (updatedField.length) {
 		return new Response(

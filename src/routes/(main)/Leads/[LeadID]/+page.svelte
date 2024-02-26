@@ -3,10 +3,10 @@
 	import { fly } from 'svelte/transition';
 	import FaList from 'svelte-icons/fa/FaList.svelte';
 	import FaLevelUpAlt from 'svelte-icons/fa/FaLevelUpAlt.svelte';
-	import FaRegCopy from 'svelte-icons/fa/FaRegCopy.svelte';
 	import { onMount } from 'svelte';
-	import { checkLogin } from 'src/lib/CheckLogin.js';
-	import { authStore } from 'src/routes/stores/authStore.js';
+	import { Toaster } from 'svelte-french-toast';
+	import LeadIdInputField from '$lib/LeadIDInputField.svelte';
+	import LeadIdDropDownField from 'src/lib/LeadIdDropDownField.svelte';
 	export let data;
 	let contact = data.contact;
 	let lead = data.lead;
@@ -14,7 +14,6 @@
 	let newActivity = false;
 	let viewActivity = false;
 	let isMobile = false;
-	let copyText = '';
 
 	const autoResize = (textarea) => {
 		// Reset textarea height to auto (to shrink back when deleting text)
@@ -23,16 +22,6 @@
 		textarea.style.height = textarea.scrollHeight + 'px';
 	};
 
-	onMount(() => {
-		isMobile = window.innerWidth <= 850 ? true : false;
-		// checkLogin($authStore.orgid);
-		autoResize(document.getElementById('chargesTextArea'));
-	});
-
-	const listStyle = 'mt-2 md:mb-2 mb-4 md:w-1/2 w-full flex md:flex-row flex-col justify-start';
-	const labelStyle = 'md:w-2/5 font-bold md:text-xl text-2xl md:mb-0 mb-1';
-	const inputStyle =
-		'border rounded-lg pl-2 pr-2 pt-1 pb-1 md:w-1/2 w-full shadow-sm shadow-gray-300 text-end md:text-start';
 	const filterBtnStyle =
 		'bg-main text-white pl-2 pt-1 pb-1 pr-2 rounded-lg hover:bg-main/75 active:scale-95 shadow-md shadow-gray-500 md:w-fit w-3/4 md:ml-0 md:mr-0 ml-auto mr-auto';
 
@@ -102,43 +91,6 @@
 			} catch (err) {
 				// @ts-ignore
 				console.log(err.text);
-			}
-		}
-	};
-
-	/**
-	 *
-	 * @param fieldName {string}
-	 * @param value {any}
-	 */
-	const updateCustomerField = async (fieldName, fieldValue) => {
-		const value = fieldValue === '' ? null : fieldValue;
-		if (contact[fieldName] !== value) {
-			try {
-				fetch('/api/Leads/UpdateCustomerField', {
-					method: 'POST',
-					headers: {
-						'content-type': 'application/json'
-					},
-					body: JSON.stringify({
-						id: Number(contact.id),
-						fieldName,
-						value
-					})
-				})
-					.then((r) => r.json())
-					.then((res) => {
-						console.log(res.message);
-						contact[fieldName] = res.data[fieldName];
-					});
-			} catch (err /** @type {Error}*/) {
-				if (err instanceof Error) {
-					console.error(err.message);
-					throw err; // Optionally rethrow the error
-				} else {
-					console.error('Unknown error:', err);
-					throw new Error('An unknown error occurred');
-				}
 			}
 		}
 	};
@@ -220,16 +172,14 @@
 		activity[data.i].edit = false;
 	};
 
-	/**
-	 *
-	 * @param {string} e
-	 */
-	const currentCopyText = (e) => {
-		const selectedDiv = document.getElementById(e);
-		copyText = selectedDiv?.target.value;
-	};
+	onMount(() => {
+		isMobile = window.innerWidth <= 850 ? true : false;
+		// checkLogin($authStore.orgid);
+		autoResize(document.getElementById('chargesTextArea'));
+	});
 </script>
 
+<Toaster />
 <div class="flex h-full w-[95%] flex-col md:w-full md:flex-row md:pl-10">
 	{#if !viewActivity}
 		<section class="md:w-3/4">
@@ -241,11 +191,17 @@
 				>
 				<div class="mt-5 flex flex-col md:mt-0">
 					<h1 class="text-center text-5xl font-bold">{contact.first_name} {contact.last_name}</h1>
-					<h3
-						class="ml-auto mr-auto mt-5 whitespace-pre-line text-wrap text-center text-2xl md:w-3/4"
-					>
-						{lead.charges}
-					</h3>
+					<textarea
+						id="chargesTextArea"
+						on:input={(e) => autoResize(document.getElementById('chargesTextArea'))}
+						placeholder="-"
+						rows="1"
+						on:keydown={(e) => (e.keyCode === 13 && !e.shiftKey ? e.target?.blur() : '')}
+						on:blur={(e) => updateLeadField('charges', e.target?.value)}
+						value={lead.charges}
+						class="no-scrollbar ml-auto mr-auto mt-5 w-full resize-none whitespace-pre-line text-wrap rounded-lg border-none pb-1 pl-2 pr-2 pt-1 text-center text-2xl"
+					/>
+
 					<button
 						on:click={() => updateLeadField('archive', !lead.archive)}
 						class={`${lead.archive ? 'bg-main' : 'bg-bad'} ml-auto mr-auto mt-10 h-10 w-48 rounded-lg text-xl font-bold text-white shadow-md shadow-gray-500`}
@@ -297,136 +253,105 @@
 						>
 							Client Information
 						</div>
-						<form class="m-5 flex text-xl md:w-full md:justify-center">
-							<ul
-								class="flex w-full flex-col md:ml-auto md:mr-auto md:w-full md:flex-row md:flex-wrap"
-							>
-								<li class={listStyle}>
-									<label class={labelStyle} for="first_name">First Name:</label>
-									<input
-										name="first_name"
-										type="text"
-										value={contact.first_name}
-										class={inputStyle}
-										placeholder="-"
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateCustomerField('first_name', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="date_of_birth">Date of Birth:</label>
-									<input
-										name="date_of_birth"
-										type="text"
-										value={contact.date_of_birth}
-										class={inputStyle}
-										placeholder="-"
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateCustomerField('date_of_birth', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="last_name">Last Name:</label>
-									<input
-										name="last_name"
-										type="text"
-										value={contact.last_name}
-										placeholder="-"
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateCustomerField('last_name', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="occupation">Occupation:</label>
-									<input
-										name="occupation"
-										type="text"
-										value={contact.occupation}
-										placeholder="-"
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateCustomerField('occupation', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="email">Email:</label>
-									<input
-										name="email"
-										type="text"
-										value={contact.email}
-										placeholder="-"
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateCustomerField('email', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="residence">Residence:</label>
-									<input
-										name="residence"
-										type="text"
-										value={contact.residence}
-										placeholder="-"
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateCustomerField('residence', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="phone_1">Phone 1:</label>
-									<input
-										name="phone_1"
-										type="text"
-										value={contact.phone_1}
-										placeholder="-"
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateCustomerField('phone_1', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="relationship">Relationship:</label>
-									<select
-										name="relationship"
-										value={contact.relationship}
-										class={inputStyle}
-										on:change={(e) => updateCustomerField('relationship', e.target?.value)}
-									>
-										<option value={null} selected={contact.relationship === null ? true : false}
-											>-</option
-										>
-										<option value={true} selected={contact.relationship ? true : false}
-											>Married</option
-										>
-										<option value={false} selected={!contact.relationship ? true : false}
-											>single</option
-										>
-									</select>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="phone_2">Phone 2:</label>
-									<input
-										name="phone_2"
-										type="text"
-										value={contact.phone_2}
-										placeholder="-"
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateCustomerField('phone_2', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="prior_charges">Prior Charges:</label>
-									<input
-										name="prior_charges"
-										type="text"
-										value={contact.prior_charges}
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateCustomerField('prior_charges', e.target?.value)}
-									/>
-								</li>
+						<form class="m-5 flex justify-center text-xl md:w-full">
+							<ul class="ml-auto mr-auto flex w-full flex-wrap">
+								<LeadIdInputField
+									copyField={true}
+									fieldID={contact.id}
+									fieldType={'contact'}
+									fieldName={'first_name'}
+									displayName={'First Name'}
+									bind:currentValue={contact.first_name}
+									order="order-1 "
+								/>
+								<LeadIdInputField
+									copyField={true}
+									fieldID={contact.id}
+									fieldType={'contact'}
+									fieldName={'last_name'}
+									displayName={'Last Name'}
+									bind:currentValue={contact.last_name}
+									order="md:order-3 order-2"
+								/>
+								<LeadIdInputField
+									copyField={true}
+									fieldID={contact.id}
+									fieldType={'contact'}
+									fieldName={'date_of_birth'}
+									displayName={'Date of Birth'}
+									currentValue={contact.date_of_birth}
+									order="md:order-2 order-3"
+								/>
+
+								<LeadIdInputField
+									copyField={false}
+									fieldID={contact.id}
+									fieldType={'contact'}
+									fieldName={'occupation'}
+									displayName={'Occupation'}
+									currentValue={contact.occupation}
+									order="md:order-4 order-7"
+								/>
+
+								<LeadIdInputField
+									copyField={true}
+									fieldID={contact.id}
+									fieldType={'contact'}
+									fieldName={'email'}
+									displayName={'Email'}
+									currentValue={contact.email}
+									order="md:order-5 order-4"
+								/>
+								<LeadIdInputField
+									copyField={false}
+									fieldID={contact.id}
+									fieldType={'contact'}
+									fieldName={'residence'}
+									displayName={'Residence'}
+									currentValue={contact.residence}
+									order="md:order-6 order-8"
+								/>
+								<LeadIdInputField
+									copyField={true}
+									fieldID={contact.id}
+									fieldType={'contact'}
+									fieldName={'phone_1'}
+									displayName={'Phone 1'}
+									currentValue={contact.phone_1}
+									order="md:order-7 order-5"
+								/>
+								<LeadIdInputField
+									copyField={true}
+									fieldID={contact.id}
+									fieldType={'contact'}
+									fieldName={'phone_2'}
+									displayName={'Phone 2'}
+									currentValue={contact.phone_2}
+									order="md:order-9 order-6"
+								/>
+								<LeadIdInputField
+									copyField={false}
+									fieldID={contact.id}
+									fieldType="contact"
+									fieldName="prior_charges"
+									displayName="Prior Charges"
+									currentValue={contact.prior_charges}
+									order="order-10"
+								/>
+
+								<LeadIdDropDownField
+									fieldID={contact.id}
+									fieldType="contact"
+									fieldName={'relationship'}
+									displayName={'Relationship'}
+									currentValue={contact.relationship}
+									fieldOptions={[
+										{ name: '-', value: null },
+										{ name: 'Married', value: true },
+										{ name: 'Single', value: false }
+									]}
+									order="order-9 md:order-8"
+								/>
 							</ul>
 						</form>
 					</section>
@@ -437,106 +362,97 @@
 							Case Details
 						</div>
 						<form class="m-5 flex justify-center text-xl md:w-full">
-							<ul class="ml-auto mr-auto flex w-full flex-wrap md:w-full">
-								<li class={listStyle}>
-									<label class={labelStyle} for="court">Court:</label>
-									<input
-										name="court"
-										type="text"
-										value={lead.court}
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateLeadField('court', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="quote">Quote:</label>
-									<input
-										name="quote"
-										type="text"
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateQuote(e.target?.value)}
-										placeholder="-"
-										value={lead.quote ? formatter.format(lead.quote) : ''}
-										class={inputStyle}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="case_number">Case Number:</label>
-									<div class="flex w-full md:w-1/2">
-										<input
-											name="case_number"
-											type="text"
-											bind:value={lead.case_number}
-											class="w-full rounded-l-lg border pb-1 pl-2 pr-2 pt-1 text-end shadow-sm shadow-gray-300 md:w-3/4 md:text-start"
-											on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-											on:blur={(e) => updateLeadField('case_number', e.target?.value)}
-										/>
-										<button
-											type="button"
-											on:click={() => navigator.clipboard.writeText(lead.case_number)}
-											class="w-1/4 rounded-r-lg bg-secondary text-white shadow-sm shadow-gray-300 hover:bg-secondary/75 active:scale-95"
-											><div class="h-6"><FaRegCopy /></div></button
-										>
-									</div>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="finance_owner">Finance Owner:</label>
-									<input
-										name="finance_owner"
-										type="text"
-										value={lead.finance_owner}
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateLeadField('finance_owner', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="charges">Charges:</label>
-									<textarea
-										id="chargesTextArea"
-										name="charges"
-										on:input={(e) => autoResize(document.getElementById('chargesTextArea'))}
-										value={lead.charges}
-										rows="1"
-										class=" w-full rounded-lg border pb-1 pl-2 pr-2 pt-1 text-end shadow-sm shadow-gray-300 md:w-1/2 md:text-start"
-										on:keydown={(e) => (e.keyCode === 13 && !e.shiftKey ? e.target?.blur() : '')}
-										on:blur={(e) => updateLeadField('charges', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="referral">Referral:</label>
-									<input
-										name="referral"
-										type="text"
-										value={lead.referral}
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateLeadField('referral', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="date_of_incident">Incident Date:</label>
-									<input
-										name="date_of_incident"
-										type="text"
-										value={lead.date_of_incident}
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateLeadField('date_of_incident', e.target?.value)}
-									/>
-								</li>
-								<li class={listStyle}>
-									<label class={labelStyle} for="reason_for_visit">Reason for Visit:</label>
-									<input
-										name="reason_for_visit"
-										type="text"
-										value={lead.reason_for_visit}
-										class={inputStyle}
-										on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-										on:blur={(e) => updateLeadField('reason_for_visit', e.target?.value)}
-									/>
-								</li>
+							<ul class="ml-auto mr-auto flex w-full flex-wrap">
+								<LeadIdInputField
+									copyField={false}
+									fieldID={lead.id}
+									fieldType={'lead'}
+									fieldName={'court'}
+									displayName={'Court'}
+									currentValue={lead.court}
+								/>
+								<LeadIdInputField
+									copyField={true}
+									fieldID={lead.id}
+									fieldType={'lead'}
+									fieldName={'case_number'}
+									displayName={'Case Number'}
+									currentValue={lead.case_number}
+								/>
+								<LeadIdInputField
+									copyField={false}
+									fieldID={lead.id}
+									fieldType={'lead'}
+									fieldName={'finance_owner'}
+									displayName={'Finance Owner'}
+									currentValue={lead.finance_owner}
+								/>
+								<LeadIdInputField
+									copyField={false}
+									fieldID={lead.id}
+									fieldType={'lead'}
+									fieldName={'referral'}
+									displayName={'Referral'}
+									currentValue={lead.referral}
+								/>
+								<LeadIdInputField
+									copyField={false}
+									fieldID={lead.id}
+									fieldType={'lead'}
+									fieldName={'date_of_incident'}
+									displayName={'Incident Date'}
+									currentValue={lead.date_of_incident}
+								/>
+
+								<LeadIdDropDownField
+									fieldType="lead"
+									fieldID={lead.id}
+									fieldName="reason_for_visit"
+									displayName="Reason for Visit"
+									currentValue={lead.reason_for_visit}
+									fieldOptions={[
+										{ name: '-', value: null },
+										{ name: 'Vacation', value: 'Vacation' },
+										{ name: 'Business', value: 'Business' },
+										{ name: 'Prior Resident', value: 'Prior Resident' },
+										{ name: 'Passing Through', value: 'Passing Through' }
+									]}
+								/>
+								<LeadIdInputField
+									fieldType="lead"
+									fieldID={lead.id}
+									fieldName="current_attorney"
+									displayName="Current Attorney"
+									currentValue={lead.current_attorney}
+								/>
+								<LeadIdInputField
+									fieldType="lead"
+									fieldID={lead.id}
+									fieldName="next_court_date"
+									displayName="Next Court Date"
+									currentValue={lead.next_court_date}
+								/>
+								<LeadIdInputField
+									fieldType="lead"
+									fieldID={lead.id}
+									fieldName="npr"
+									displayName="NPR"
+									currentValue={lead.npr}
+								/>
+								<LeadIdInputField
+									fieldType="lead"
+									fieldID={lead.id}
+									fieldName="next_court_reason"
+									displayName="Next Court Reason"
+									currentValue={lead.next_court_reason}
+								/>
+								<LeadIdInputField
+									fieldType="lead"
+									fieldID={lead.id}
+									fieldName="financial_affidavit"
+									displayName="Financial Affidavit"
+									currentValue={lead.financial_affidavit}
+								/>
 							</ul>
 						</form>
 					</section>

@@ -5,6 +5,7 @@ export async function POST({ request }) {
 	const data = await request.json();
 
 	let updates;
+	let isDate = false;
 
 	if (data.fieldName === 'date_of_incident') {
 		//Need to convert Dat of Birth to proper format first
@@ -17,22 +18,42 @@ export async function POST({ request }) {
 		updates = {
 			date_of_incident: doi
 		};
+		isDate = true;
 	} else {
 		updates = {
 			[data.fieldName]: data.value
 		};
 	}
 
-	const updatedField = await sql`
+	let updatedField = await sql`
 	update leads 
 	set ${sql(updates, data.fieldName)}
 	where id = ${data.id}
 	returning *
   `;
 
-	if (updatedField.length) {
-		return new Response(JSON.stringify({ message: `${data.fieldName} updated to ${data.value}` }), {
-			status: 201
+	if (updatedField.length && isDate) {
+		updatedField = updatedField.map((e) => {
+			const date = new Date(e.date_of_incident);
+
+			const formattedDate = date.toISOString();
+			const month = Number(formattedDate.substring(5, 7));
+			const day = Number(formattedDate.slice(8, 10));
+			const year = formattedDate.substring(0, 4);
+
+			return { ...e, date_of_incident: `${month}/${day}/${year}` };
 		});
+	}
+
+	if (updatedField.length) {
+		return new Response(
+			JSON.stringify({
+				message: `${data.fieldName} updated to ${data.value}`,
+				data: updatedField[0]
+			}),
+			{
+				status: 201
+			}
+		);
 	}
 }
