@@ -1,11 +1,26 @@
-<script>
+<script lang="ts">
+	import CalendarIcon from 'svelte-radix/Calendar.svelte';
+	import type { DateRange } from 'bits-ui';
+	import {
+		CalendarDate,
+		DateFormatter,
+		getLocalTimeZone,
+		type DateValue
+	} from '@internationalized/date';
+	import { cn } from '$lib/utils';
+	import { Button } from '$lib/components/ui/button';
+	import { RangeCalendar } from '$lib/components/ui/range-calendar';
+	import * as Popover from '$lib/components/ui/popover';
+
 	import { fly } from 'svelte/transition';
 	import LeadCard from './LeadCard.svelte';
 	import FaUserPlus from 'svelte-icons/fa/FaUserPlus.svelte';
 	import { onMount } from 'svelte';
 	import toast, { Toaster } from 'svelte-french-toast';
+
 	export let data;
 	export let form;
+
 	let customerList = data.customerList
 		.sort((a, b) => (a.Name.toUpperCase() < b.Name.toUpperCase() ? -1 : 1))
 		.slice(0, 5);
@@ -13,17 +28,13 @@
 	let displayList = leadList;
 	let toggleArchive = false;
 	let toggleSearchExistingCustomer = false;
-	let customerLoaded = false;
-	/** @type {number | string}*/
-	let newLeadsValue = 0;
-	/** @type {number | string}*/
-	let contactedValue = 0;
-	/** @type {number | string}*/
-	let quotedValue = 0;
-	/** @type {number | string}*/
-	let wonValue = 0;
-	/** @type {number | string}*/
-	let lostValue = 0;
+
+	let customerLoaded: boolean = false;
+	let newLeadsValue: number | string = 0;
+	let contactedValue: number | string = 0;
+	let quotedValue: number | string = 0;
+	let wonValue: number | string = 0;
+	let lostValue: number | string = 0;
 	let customerDetails = {
 		id: 0,
 		orgid: null,
@@ -49,16 +60,14 @@
 		quote: null,
 		status: null
 	};
-	/**
-	 *  @typedef {Object} FailedFields
-	 * @property {string | null} first_name
-	 * @property {string | null} last_name
-	 * @property {string | null} phone_1
-	 * @property {string | null} phone_2
-	 */
 
-	/** @type {FailedFields}*/
-	let failedField = {
+	interface FailedFields {
+		first_name: string | null;
+		last_name: string | null;
+		phone_1: string | null;
+		phone_2: string | null;
+	}
+	let failedField: FailedFields = {
 		first_name: null,
 		last_name: null,
 		phone_1: null,
@@ -79,15 +88,27 @@
 	const nlInputCustomerLoaded =
 		'rounded-lg h-6 mt-auto mb-auto pl-2 pr-2 bg-white/75 text-gray-500 pointer-events-none';
 
-	/**
-	 * @interface MyLead
-	 * @property {number} id
-	 * @property {string} Name
-	 * @property {string} Quote
-	 * @property {string} Charge
-	 * @property {string} Status
-	 */
-	let leadItem = { id: 0, Name: '', Quote: '', Charge: '', Status: '' };
+	interface MyLead {
+		id: number;
+		Name: string;
+		Quote: string;
+		Charge: string;
+		Status: string;
+	}
+	let leadItem: MyLead = { id: 0, Name: '', Quote: '', Charge: '', Status: '' };
+
+	let today = data.dates;
+
+	//Date Range Variables
+	const df = new DateFormatter('en-US', {
+		dateStyle: 'medium'
+	});
+	let value: DateRange | undefined = {
+		start: new CalendarDate(today.year, today.month, today.day).subtract({ days: 45 }),
+		end: new CalendarDate(today.year, today.month, today.day)
+	};
+	let startValue: DateValue | undefined = undefined;
+	//End Date Range
 
 	//Leads
 	const containerStyle =
@@ -317,9 +338,6 @@
 		};
 	};
 
-	showArchived();
-	updateValue();
-
 	onMount(() => {
 		if (form?.error) {
 			switch (form?.message) {
@@ -370,7 +388,26 @@
 				status: form.data.status
 			};
 		}
+
+		if (form?.leadList) {
+			leadList = form.leadList;
+			displayList = leadList;
+
+			const begin = new Date(form.dates.start.replace(/-/g, '/'));
+			const ending = new Date(form.dates.end.replace(/-/g, '/'));
+
+			value = {
+				start: new CalendarDate(begin.getFullYear(), begin.getMonth() + 1, begin.getDate()),
+				end: new CalendarDate(ending.getFullYear(), ending.getMonth() + 1, ending.getDate())
+			};
+
+			showArchived();
+			updateValue();
+		}
 	});
+
+	showArchived();
+	updateValue();
 </script>
 
 <Toaster />
@@ -378,19 +415,81 @@
 	class={`ml-auto mr-auto flex h-full w-[90%] flex-col justify-center md:ml-0 md:mr-0 md:w-full `}
 >
 	<section class="flex flex-col-reverse justify-between md:flex-row">
-		<div class="mb-5 flex justify-center md:mb-10 md:w-1/3 md:justify-start">
-			<div class="ml-2 mt-auto flex justify-center text-center text-2xl md:ml-14 md:text-base">
+		<div class="mb-5 mt-auto flex flex-col justify-center md:mb-0 md:w-1/3 md:justify-start">
+			<div
+				class="flex justify-center text-center text-2xl md:ml-14 md:w-[300px] md:justify-between md:text-base"
+			>
 				<input
 					name="archive"
 					type="checkbox"
-					class="mb-auto mt-auto h-10 w-5"
+					class="order-2 mb-auto mt-auto h-10 w-5 md:ml-10"
 					on:click={() => {
 						toggleArchive = !toggleArchive;
 						showArchived();
 					}}
 				/>
-				<label for="archive" class="mb-auto ml-2 mt-auto">Show Archive</label>
+				<label for="archive" class="order-1 mb-auto mr-2 mt-auto font-bold md:ml-0"
+					>Show Archive:</label
+				>
 			</div>
+			<section class="mb-4 ml-2 mr-2 md:ml-14 md:mr-14">
+				<div
+					class="md:w-784 mb-2 flex flex-col justify-center md:w-[300px] md:flex-row md:justify-between"
+				>
+					<div class="ml-auto mr-auto text-xl font-bold md:ml-0 md:mr-0 md:pr-5 md:text-base">
+						Create Date Range:
+					</div>
+					<form method="post" action="?/updateDateRange" class="ml-auto mr-auto md:ml-0 md:mr-0">
+						<label for="start" hidden>Start</label>
+						<input hidden type="text" name="start" value={value?.start} />
+						<input hidden type="text" name="end" value={value?.end} />
+						<button
+							class={` ${value?.start && value?.end ? 'bg-good hover:bg-good/75' : 'pointer-events-none bg-good/50'} rounded-md pb-1 pl-10 pr-10 pt-1 text-white active:scale-95 md:pb-1 md:pl-2 md:pr-2 md:pt-1`}
+							>Update</button
+						>
+					</form>
+				</div>
+				<div class="">
+					<div class="grid gap-2">
+						<Popover.Root openFocus>
+							<Popover.Trigger asChild let:builder>
+								<Button
+									variant="outline"
+									class={cn(
+										'text-center text-lg font-normal md:w-[300px] md:justify-start md:text-left md:text-base',
+										!value && 'text-muted-foreground'
+									)}
+									builders={[builder]}
+								>
+									<CalendarIcon class="mr-2 h-5 w-5 md:h-4 md:w-4" />
+									{#if value && value.start}
+										{#if value.end}
+											{df.format(value.start.toDate(getLocalTimeZone()))} - {df.format(
+												value.end.toDate(getLocalTimeZone())
+											)}
+										{:else}
+											{df.format(value.start.toDate(getLocalTimeZone()))}
+										{/if}
+									{:else if startValue}
+										{df.format(startValue.toDate(getLocalTimeZone()))}
+									{:else}
+										Pick a date
+									{/if}
+								</Button>
+							</Popover.Trigger>
+							<Popover.Content class="w-auto p-2" align="center">
+								<RangeCalendar
+									bind:value
+									bind:startValue
+									placeholder={value?.start}
+									initialFocus
+									numberOfMonths={2}
+								/>
+							</Popover.Content>
+						</Popover.Root>
+					</div>
+				</div>
+			</section>
 		</div>
 		<h1 class="mb-5 ml-auto mr-auto mt-5 text-center text-6xl font-semibold md:mt-24 md:w-1/3">
 			Leads
@@ -406,6 +505,7 @@
 			</button>
 		</div>
 	</section>
+
 	<section
 		class="ml-auto mr-auto flex h-full w-full flex-col justify-start md:flex-row md:justify-evenly"
 	>
@@ -803,12 +903,35 @@
 					</li>
 					<li class={nlLIStyle}>
 						<label for="reason_for_visit" class={nlLabelStyle}>Reason for Visit:</label>
-						<input
+						<select
 							name="reason_for_visit"
-							type="text"
+							value={leadDetails.reason_for_visit}
 							class={nlInputStyle}
-							value={leadDetails.reason_for_visit ?? null}
-						/>
+						>
+							<option value={null} selected={leadDetails.reason_for_visit === null ? true : false}
+								>-</option
+							>
+							<option
+								value={'Vacation'}
+								selected={leadDetails.reason_for_visit === 'Vacation' ? true : false}
+								>Vacation</option
+							>
+							<option
+								value={'Business'}
+								selected={leadDetails.reason_for_visit === 'Business' ? true : false}
+								>Business</option
+							>
+							<option
+								value={'Prior Resident'}
+								selected={leadDetails.reason_for_visit === 'Prior Resident' ? true : false}
+								>Prior Resident</option
+							>
+							<option
+								value={'Passing Through'}
+								selected={leadDetails.reason_for_visit === 'Passing Through' ? true : false}
+								>Passing Through</option
+							>
+						</select>
 					</li>
 					<li class={nlLIStyle}>
 						<label for="quote" class={nlLabelStyle}>Quote:</label>

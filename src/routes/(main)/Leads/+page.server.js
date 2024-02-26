@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { sql } from 'src/db/postgresql.server';
+import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
@@ -8,9 +9,21 @@ export async function load({ locals }) {
 	}
 	const orgid = locals.user.orgid;
 
+	const date = new Date();
+	const dates = {
+		day: date.getDate(),
+		month: date.getMonth() + 1,
+		year: date.getFullYear()
+	};
+
+	const datePull = {
+		start: new CalendarDate(dates.year, dates.month, dates.day).subtract({ days: 45 }),
+		end: new CalendarDate(dates.year, dates.month, dates.day)
+	};
+
 	//List of Leads are pulled from the server to then generate the leads break out by card in each board
 	const leads =
-		await sql`select l.id, c.first_name, l.quote, l.charges, l.status, l.archive from leads l left join customers c on l.customer_id = c.id where l.orgid = ${orgid}`;
+		await sql`select l.id, c.first_name, l.quote, l.charges, l.status, l.archive from leads l left join customers c on l.customer_id = c.id where l.orgid = ${orgid} and l.created_at > ${datePull.start.toString()} and l.created_at < ${datePull.end.toString()}`;
 
 	//List of customers is pulled so that when a user attempts to add a new lead for an existing customer, the list is already generated.
 	const customers =
@@ -36,7 +49,7 @@ export async function load({ locals }) {
 		};
 	});
 
-	return { leadList, customerList };
+	return { leadList, customerList, dates };
 }
 
 export const actions = {
@@ -167,5 +180,31 @@ export const actions = {
 				console.log(addActivity);
 			}
 		}
+	},
+	updateDateRange: async ({ request, locals }) => {
+		const data = Object.fromEntries(await request.formData());
+		const orgid = locals.user.orgid;
+		const uid = locals.user.uid;
+
+		const dates = {
+			start: data.start,
+			end: data.end
+		};
+
+		const leads =
+			await sql`select l.id, c.first_name, l.quote, l.charges, l.status, l.archive from leads l left join customers c on l.customer_id = c.id where l.orgid = ${orgid} and l.created_at > ${dates.start.toString()} and l.created_at < ${dates.end.toString()}`;
+
+		const leadList = leads.map((e) => {
+			return {
+				id: e.id,
+				Name: e.first_name,
+				Quote: e.quote,
+				Charge: e.charges,
+				Status: e.status,
+				Archive: e.archive
+			};
+		});
+
+		return { leadList, dates };
 	}
 };

@@ -9,6 +9,7 @@ declare global {
 				uid: string | null;
 			};
 		}
+
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
