@@ -15,6 +15,100 @@
 	let viewActivity = false;
 	let isMobile = false;
 
+	const contactFields = [
+		{
+			fieldName: 'first_name',
+			displayName: 'First Name',
+			copyField: true,
+			order: 'order-1'
+		},
+		{
+			fieldName: 'last_name',
+			displayName: 'Last Name',
+			copyField: true,
+			order: 'md:order-3 order-2'
+		},
+		{
+			fieldName: 'date_of_birth',
+			displayName: 'Date of Birth',
+			copyField: true,
+			order: 'md:order-2 order-3'
+		},
+		{
+			fieldName: 'occupation',
+			displayName: 'Occupation',
+			copyField: false,
+			order: 'md:order-4 order-7'
+		},
+		{
+			fieldName: 'email',
+			displayName: 'Email',
+			copyField: true,
+			order: 'md:order-5 order-4'
+		},
+		{
+			fieldName: 'residence',
+			displayName: 'Residence',
+			copyField: false,
+			order: 'md:order-6 order-8'
+		},
+		{
+			fieldName: 'phone_1',
+			displayName: 'Phone 1',
+			copyField: true,
+			order: 'md:order-7 order-5'
+		},
+		{
+			fieldName: 'phone_2',
+			displayName: 'Phone 2',
+			copyField: true,
+			order: 'md:order-9 order-6'
+		},
+		{
+			fieldName: 'prior_charges',
+			displayName: 'Prior Charges',
+			copyField: false,
+			order: 'order-10'
+		},
+		{
+			fieldName: 'relationship',
+			displayName: 'Relationship',
+			isDropDown: true,
+			options: [
+				{ name: '-', value: null },
+				{ name: 'Married', value: true },
+				{ name: 'Single', value: false }
+			],
+			order: 'order-9 md:order-8'
+		}
+	];
+
+	let caseFields = [
+		{ field: 'court', displayName: 'Court', order: 'order-1' },
+		{ field: 'case_number', displayName: 'Case Number', copy: true, order: 'order-2' },
+		{ field: 'finance_owner', displayName: 'Finance Owner', order: 'order-3' },
+		{ field: 'referral', displayName: 'Referral', order: 'order-4' },
+		{ field: 'date_of_incident', displayName: 'Incident Date', order: 'order-5' },
+		{
+			field: 'reason_for_visit',
+			displayName: 'Reason for Visit',
+			isDropDown: true,
+			options: [
+				{ name: '-', value: null },
+				{ name: 'Vacation', value: 'Vacation' },
+				{ name: 'Business', value: 'Business' },
+				{ name: 'Prior Resident', value: 'Prior Resident' },
+				{ name: 'Passing Through', value: 'Passing Through' }
+			],
+			order: 'order-6'
+		},
+		{ field: 'current_attorney', displayName: 'Current Attorney', order: 'order-7' },
+		{ field: 'next_court_date', displayName: 'Next Court Date', order: 'order-8' },
+		{ field: 'next_court_reason', displayName: 'Next Court Reason', order: 'order-9 md:order-10' },
+		{ field: 'npr', displayName: 'NPR', order: 'order-10 md:order-9' },
+		{ field: 'financial_affidavit', displayName: 'Financial Affidavit', order: 'order-11' }
+	];
+
 	const autoResize = (textarea) => {
 		// Reset textarea height to auto (to shrink back when deleting text)
 		textarea.style.height = 'auto';
@@ -245,6 +339,11 @@
 					>
 				</div>
 			</section>
+
+			<!-- ------------------ -->
+			<!-- Client Information -->
+			<!-- - - - Start - - -  -->
+			<!-- ------------------ -->
 			<section class="flex">
 				<div class="w-full">
 					<section class="w-full">
@@ -253,220 +352,81 @@
 						>
 							Client Information
 						</div>
-						<form class="m-5 flex justify-center text-xl md:w-full">
+						<div class="m-5 flex justify-center text-xl md:w-full">
 							<ul class="ml-auto mr-auto flex w-full flex-wrap">
-								<LeadIdInputField
-									copyField={true}
-									fieldID={contact.id}
-									fieldType={'contact'}
-									fieldName={'first_name'}
-									displayName={'First Name'}
-									bind:currentValue={contact.first_name}
-									order="order-1 "
-								/>
-								<LeadIdInputField
-									copyField={true}
-									fieldID={contact.id}
-									fieldType={'contact'}
-									fieldName={'last_name'}
-									displayName={'Last Name'}
-									bind:currentValue={contact.last_name}
-									order="md:order-3 order-2"
-								/>
-								<LeadIdInputField
-									copyField={true}
-									fieldID={contact.id}
-									fieldType={'contact'}
-									fieldName={'date_of_birth'}
-									displayName={'Date of Birth'}
-									currentValue={contact.date_of_birth}
-									order="md:order-2 order-3"
-								/>
-
-								<LeadIdInputField
-									copyField={false}
-									fieldID={contact.id}
-									fieldType={'contact'}
-									fieldName={'occupation'}
-									displayName={'Occupation'}
-									currentValue={contact.occupation}
-									order="md:order-4 order-7"
-								/>
-
-								<LeadIdInputField
-									copyField={true}
-									fieldID={contact.id}
-									fieldType={'contact'}
-									fieldName={'email'}
-									displayName={'Email'}
-									currentValue={contact.email}
-									order="md:order-5 order-4"
-								/>
-								<LeadIdInputField
-									copyField={false}
-									fieldID={contact.id}
-									fieldType={'contact'}
-									fieldName={'residence'}
-									displayName={'Residence'}
-									currentValue={contact.residence}
-									order="md:order-6 order-8"
-								/>
-								<LeadIdInputField
-									copyField={true}
-									fieldID={contact.id}
-									fieldType={'contact'}
-									fieldName={'phone_1'}
-									displayName={'Phone 1'}
-									currentValue={contact.phone_1}
-									order="md:order-7 order-5"
-								/>
-								<LeadIdInputField
-									copyField={true}
-									fieldID={contact.id}
-									fieldType={'contact'}
-									fieldName={'phone_2'}
-									displayName={'Phone 2'}
-									currentValue={contact.phone_2}
-									order="md:order-9 order-6"
-								/>
-								<LeadIdInputField
-									copyField={false}
-									fieldID={contact.id}
-									fieldType="contact"
-									fieldName="prior_charges"
-									displayName="Prior Charges"
-									currentValue={contact.prior_charges}
-									order="order-10"
-								/>
-
-								<LeadIdDropDownField
-									fieldID={contact.id}
-									fieldType="contact"
-									fieldName={'relationship'}
-									displayName={'Relationship'}
-									currentValue={contact.relationship}
-									fieldOptions={[
-										{ name: '-', value: null },
-										{ name: 'Married', value: true },
-										{ name: 'Single', value: false }
-									]}
-									order="order-9 md:order-8"
-								/>
+								{#each contactFields as item, index}
+									{#if item.isDropDown}
+										<LeadIdDropDownField
+											fieldID={contact.id}
+											fieldType="contact"
+											fieldName={item.fieldName}
+											displayName={item.displayName}
+											currentValue={contact[item.fieldName]}
+											fieldOptions={item.options}
+											order={item.order}
+										/>
+									{:else}
+										<LeadIdInputField
+											copyField={item.copyField}
+											fieldID={contact.id}
+											fieldType="contact"
+											fieldName={item.fieldName}
+											displayName={item.displayName}
+											bind:currentValue={contact[item.fieldName]}
+											order={item.order}
+										/>
+									{/if}
+								{/each}
 							</ul>
-						</form>
+						</div>
 					</section>
+					<!-- ------------------ -->
+					<!-- Client Information -->
+					<!-- - - - End - - -  -->
+					<!-- ------------------ -->
+
+					<!-- ------------------ -->
+					<!-- Case Information -->
+					<!-- - - - Start - - -  -->
+					<!-- ------------------ -->
 					<section>
 						<div
 							class="bg-main mt-10 w-full rounded-lg pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
 						>
 							Case Details
 						</div>
-						<form class="m-5 flex justify-center text-xl md:w-full">
+						<div class="m-5 flex justify-center text-xl md:w-full">
 							<ul class="ml-auto mr-auto flex w-full flex-wrap">
-								<LeadIdInputField
-									copyField={false}
-									fieldID={lead.id}
-									fieldType={'lead'}
-									fieldName={'court'}
-									displayName={'Court'}
-									currentValue={lead.court}
-									order="order-1"
-								/>
-								<LeadIdInputField
-									copyField={true}
-									fieldID={lead.id}
-									fieldType={'lead'}
-									fieldName={'case_number'}
-									displayName={'Case Number'}
-									currentValue={lead.case_number}
-									order="order-2"
-								/>
-								<LeadIdInputField
-									copyField={false}
-									fieldID={lead.id}
-									fieldType={'lead'}
-									fieldName={'finance_owner'}
-									displayName={'Finance Owner'}
-									currentValue={lead.finance_owner}
-									order="order-3"
-								/>
-								<LeadIdInputField
-									copyField={false}
-									fieldID={lead.id}
-									fieldType={'lead'}
-									fieldName={'referral'}
-									displayName={'Referral'}
-									currentValue={lead.referral}
-									order="order-4"
-								/>
-								<LeadIdInputField
-									copyField={false}
-									fieldID={lead.id}
-									fieldType={'lead'}
-									fieldName={'date_of_incident'}
-									displayName={'Incident Date'}
-									currentValue={lead.date_of_incident}
-									order="order-5"
-								/>
-
-								<LeadIdDropDownField
-									fieldType="lead"
-									fieldID={lead.id}
-									fieldName="reason_for_visit"
-									displayName="Reason for Visit"
-									currentValue={lead.reason_for_visit}
-									fieldOptions={[
-										{ name: '-', value: null },
-										{ name: 'Vacation', value: 'Vacation' },
-										{ name: 'Business', value: 'Business' },
-										{ name: 'Prior Resident', value: 'Prior Resident' },
-										{ name: 'Passing Through', value: 'Passing Through' }
-									]}
-									order="order-6"
-								/>
-								<LeadIdInputField
-									fieldType="lead"
-									fieldID={lead.id}
-									fieldName="current_attorney"
-									displayName="Current Attorney"
-									currentValue={lead.current_attorney}
-									order="order-7"
-								/>
-								<LeadIdInputField
-									fieldType="lead"
-									fieldID={lead.id}
-									fieldName="next_court_date"
-									displayName="Next Court Date"
-									currentValue={lead.next_court_date}
-									order="order-8"
-								/>
-								<LeadIdInputField
-									fieldType="lead"
-									fieldID={lead.id}
-									fieldName="next_court_reason"
-									displayName="Next Court Reason"
-									currentValue={lead.next_court_reason}
-									order="order-9 md:order-10"
-								/>
-								<LeadIdInputField
-									fieldType="lead"
-									fieldID={lead.id}
-									fieldName="npr"
-									displayName="NPR"
-									currentValue={lead.npr}
-									order="order-10 md:order-9"
-								/>
-								<LeadIdInputField
-									fieldType="lead"
-									fieldID={lead.id}
-									fieldName="financial_affidavit"
-									displayName="Financial Affidavit"
-									currentValue={lead.financial_affidavit}
-									order="order-11"
-								/>
+								{#each caseFields as item, index}
+									{#if item.isDropDown}
+										<LeadIdDropDownField
+											fieldType="lead"
+											fieldID={lead.id}
+											fieldName={item.field}
+											displayName={item.displayName}
+											currentValue={lead[item.field]}
+											fieldOptions={item.options}
+											order={item.order}
+										/>
+									{:else}
+										<LeadIdInputField
+											copyField={item?.copy}
+											fieldID={lead.id}
+											fieldType={'lead'}
+											fieldName={item.field}
+											displayName={item.displayName}
+											currentValue={lead[item.field]}
+											order={item.order}
+										/>
+									{/if}
+								{/each}
 							</ul>
-						</form>
+						</div>
 					</section>
+					<!-- ------------------ -->
+					<!-- Case Information -->
+					<!-- - - - End - - -  -->
+					<!-- ------------------ -->
 				</div>
 			</section>
 		</section>
