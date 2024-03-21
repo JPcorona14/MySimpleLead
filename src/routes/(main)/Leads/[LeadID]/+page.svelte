@@ -274,6 +274,7 @@
 	});
 
 	const copyAll = () => {
+		//Start by copying the quote and charges to the clipboard
 		let textBody = `Quoted: ${lead.quote ? formatter.format(lead.quote) : '-'} \n`;
 		textBody += `Charges: ${lead.charges} \n`;
 
