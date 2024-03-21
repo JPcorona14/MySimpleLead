@@ -4,9 +4,10 @@
 	import FaList from 'svelte-icons/fa/FaList.svelte';
 	import FaLevelUpAlt from 'svelte-icons/fa/FaLevelUpAlt.svelte';
 	import { onMount } from 'svelte';
-	import { Toaster } from 'svelte-french-toast';
+	import toast, { Toaster } from 'svelte-french-toast';
 	import LeadIdInputField from '$lib/LeadIDInputField.svelte';
 	import LeadIdDropDownField from 'src/lib/LeadIdDropDownField.svelte';
+	import { text } from '@sveltejs/kit';
 	export let data;
 	let contact = data.contact;
 	let lead = data.lead;
@@ -271,6 +272,29 @@
 		// checkLogin($authStore.orgid);
 		autoResize(document.getElementById('chargesTextArea'));
 	});
+
+	const copyAll = () => {
+		let textBody = `Quoted: ${lead.quote ? formatter.format(lead.quote) : '-'} \n`;
+		textBody += `Charges: ${lead.charges} \n`;
+
+		for (let i = 0; i < contactFields.length; i++) {
+			if (contact[contactFields[i].fieldName]) {
+				textBody +=
+					contactFields[i].displayName + ': ' + contact[contactFields[i].fieldName] + '\n';
+			}
+		}
+
+		for (let i = 0; i < caseFields.length; i++) {
+			if (lead[caseFields[i].field]) {
+				textBody += caseFields[i].displayName + ': ' + lead[caseFields[i].field] + '\n';
+			}
+		}
+
+		console.log(textBody);
+
+		navigator.clipboard.writeText(textBody);
+		toast.success('Clipboard: \n' + textBody);
+	};
 </script>
 
 <Toaster />
@@ -280,7 +304,7 @@
 			<section class="mb-10 mt-10 flex flex-col-reverse justify-between md:mt-10 md:flex-row">
 				<a
 					href="../Leads"
-					class=" bg-main hover:bg-main/75 ml-10 hidden h-12 w-12 justify-center rounded-full text-3xl text-white no-underline shadow-md shadow-gray-500 active:scale-95 md:visible md:flex"
+					class=" ml-10 hidden h-12 w-12 justify-center rounded-full bg-main text-3xl text-white no-underline shadow-md shadow-gray-500 hover:bg-main/75 active:scale-95 md:visible md:flex"
 					><div class="mb-auto mt-auto">&lt;</div></a
 				>
 				<div class="mt-5 flex flex-col md:mt-0">
@@ -305,7 +329,7 @@
 				<div class="mb-auto flex flex-col justify-start md:mr-10 md:w-12">
 					<div class="mb-5 flex justify-end">
 						<select
-							class="bg-main ml-auto mr-auto w-1/2 rounded-lg border border-none p-1 pl-5 pr-5 text-center text-2xl font-bold text-white shadow-md shadow-gray-500 md:w-fit"
+							class="ml-auto mr-auto w-1/2 rounded-lg border border-none bg-main p-1 pl-5 pr-5 text-center text-2xl font-bold text-white shadow-md shadow-gray-500 md:w-fit"
 							on:change={(e) => updateLeadField('status', e.target?.value)}
 						>
 							<option value="New Lead" selected={lead.status === 'New Lead' ? true : false}
@@ -334,8 +358,18 @@
 				<div class="flex w-full justify-end md:hidden">
 					<button
 						on:click={() => (viewActivity = true)}
-						class="bg-main mb-5 mr-4 h-16 w-16 rounded-full text-white shadow-md shadow-gray-500"
+						class="mb-5 mr-4 h-16 w-16 rounded-full bg-main text-white shadow-md shadow-gray-500"
 						><div class="ml-auto mr-auto h-8 w-8"><FaList /></div></button
+					>
+				</div>
+			</section>
+
+			<section class="pb-auto flex h-16 justify-end">
+				<div class="">
+					<button
+						on:click={copyAll}
+						class="h-10 w-24 rounded-lg bg-good text-xl font-bold text-white shadow-md shadow-gray-500"
+						>Share</button
 					>
 				</div>
 			</section>
@@ -348,7 +382,7 @@
 				<div class="w-full">
 					<section class="w-full">
 						<div
-							class="bg-main w-full rounded-lg pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
+							class="w-full rounded-lg bg-main pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
 						>
 							Client Information
 						</div>
@@ -391,7 +425,7 @@
 					<!-- ------------------ -->
 					<section>
 						<div
-							class="bg-main mt-10 w-full rounded-lg pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
+							class="mt-10 w-full rounded-lg bg-main pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
 						>
 							Case Details
 						</div>
@@ -427,6 +461,13 @@
 					<!-- Case Information -->
 					<!-- - - - End - - -  -->
 					<!-- ------------------ -->
+					<section>
+						<div
+							class="mt-10 w-full rounded-lg bg-main pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
+						>
+							Documents
+						</div>
+					</section>
 				</div>
 			</section>
 		</section>
@@ -442,13 +483,13 @@
 			<div class="ml-5 mt-5 h-fit">
 				<button
 					on:click={() => (viewActivity = false)}
-					class="bg-main h-8 w-14 rounded-full text-white"
+					class="h-8 w-14 rounded-full bg-main text-white"
 				>
 					<div class="h-6 rotate-[270deg]"><FaLevelUpAlt /></div>
 				</button>
 			</div>
 			<div
-				class=" bg-main ml-4 mr-4 mt-5 h-fit rounded-lg text-center text-xl font-bold text-white shadow-md shadow-gray-500 md:mt-10"
+				class=" ml-4 mr-4 mt-5 h-fit rounded-lg bg-main text-center text-xl font-bold text-white shadow-md shadow-gray-500 md:mt-10"
 			>
 				Activity
 			</div>
@@ -474,7 +515,7 @@
 				<li class="m-1 flex justify-center">
 					<button
 						on:click={() => filterActivity('X')}
-						class="bg-bad hover:bg-bad/75 mb-2 mt-4 w-3/4 rounded-lg pb-1 pl-2 pr-2 pt-1 text-white shadow-md shadow-gray-500 active:scale-95 md:mb-0 md:mt-0 md:w-fit"
+						class="mb-2 mt-4 w-3/4 rounded-lg bg-bad pb-1 pl-2 pr-2 pt-1 text-white shadow-md shadow-gray-500 hover:bg-bad/75 active:scale-95 md:mb-0 md:mt-0 md:w-fit"
 						>X</button
 					>
 				</li>
@@ -506,7 +547,7 @@
 								</select>
 								<button
 									id="submitNote"
-									class="bg-good hover:bg-good/75 mb-2 w-1/3 rounded-lg pb-1 pt-1 font-bold text-white active:scale-95"
+									class="mb-2 w-1/3 rounded-lg bg-good pb-1 pt-1 font-bold text-white hover:bg-good/75 active:scale-95"
 									>Save</button
 								>
 							</div>
@@ -553,13 +594,13 @@
 				<div class="ml-5 mt-5 md:hidden">
 					<button
 						on:click={() => (viewActivity = false)}
-						class="bg-main h-8 w-14 rounded-full text-white"
+						class="h-8 w-14 rounded-full bg-main text-white"
 					>
 						<div class="h-6 rotate-[270deg]"><FaLevelUpAlt /></div>
 					</button>
 				</div>
 				<div
-					class=" bg-main ml-4 mr-4 mt-5 rounded-lg text-center text-xl font-bold text-white shadow-md shadow-gray-500 md:mt-10"
+					class=" ml-4 mr-4 mt-5 rounded-lg bg-main text-center text-xl font-bold text-white shadow-md shadow-gray-500 md:mt-10"
 				>
 					Activity
 				</div>
@@ -585,7 +626,7 @@
 					<li class="m-1 flex justify-center">
 						<button
 							on:click={() => filterActivity('X')}
-							class="bg-bad hover:bg-bad/75 mb-2 mt-4 w-3/4 rounded-lg pb-1 pl-2 pr-2 pt-1 text-white shadow-md shadow-gray-500 active:scale-95 md:mb-0 md:mt-0 md:w-fit"
+							class="mb-2 mt-4 w-3/4 rounded-lg bg-bad pb-1 pl-2 pr-2 pt-1 text-white shadow-md shadow-gray-500 hover:bg-bad/75 active:scale-95 md:mb-0 md:mt-0 md:w-fit"
 							>X</button
 						>
 					</li>
@@ -617,7 +658,7 @@
 									</select>
 									<button
 										id="submitNote"
-										class="bg-good hover:bg-good/75 mb-2 w-1/3 rounded-lg pb-1 pt-1 font-bold text-white active:scale-95"
+										class="mb-2 w-1/3 rounded-lg bg-good pb-1 pt-1 font-bold text-white hover:bg-good/75 active:scale-95"
 										>Save</button
 									>
 								</div>
@@ -695,7 +736,7 @@
 									/>
 									<button
 										type="submit"
-										class="bg-good mb-2 mt-2 w-full rounded-md pb-1 pt-1 text-white shadow-md shadow-gray-500 active:scale-95"
+										class="mb-2 mt-2 w-full rounded-md bg-good pb-1 pt-1 text-white shadow-md shadow-gray-500 active:scale-95"
 										>Save</button
 									>
 								</form>
@@ -720,7 +761,7 @@
 											<button
 												type="button"
 												on:click={() => (a.edit = true)}
-												class="bg-good h-full w-full rounded-md pb-1 pt-1 text-white shadow-md shadow-gray-500"
+												class="h-full w-full rounded-md bg-good pb-1 pt-1 text-white shadow-md shadow-gray-500"
 												>Edit</button
 											>
 										{/if}
@@ -729,7 +770,7 @@
 										<label for="id" hidden />
 										<input name="id" value={a.id} hidden />
 										<button
-											class="bg-bad h-full w-full rounded-md pb-1 pt-1 text-white shadow-md shadow-gray-500"
+											class="h-full w-full rounded-md bg-bad pb-1 pt-1 text-white shadow-md shadow-gray-500"
 											>Delete</button
 										>
 									</form>

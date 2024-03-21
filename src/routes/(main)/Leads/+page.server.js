@@ -16,14 +16,17 @@ export async function load({ locals }) {
 		year: date.getFullYear()
 	};
 
+	//Set dates to pull from 30 days before today and up to tomorrow to capture everything to the end of today
 	const datePull = {
-		start: new CalendarDate(dates.year, dates.month, dates.day).subtract({ days: 45 }),
-		end: new CalendarDate(dates.year, dates.month, dates.day)
+		start: new CalendarDate(dates.year, dates.month, dates.day).subtract({ days: 30 }),
+		end: new CalendarDate(dates.year, dates.month, dates.day).add({ days: 1 })
 	};
 
 	//List of Leads are pulled from the server to then generate the leads break out by card in each board
 	const leads =
-		await sql`select l.id, c.first_name, l.quote, l.charges, l.status, l.archive from leads l left join customers c on l.customer_id = c.id where l.orgid = ${orgid} and l.created_at > ${datePull.start.toString()} and l.created_at < ${datePull.end.toString()}`;
+		await sql`select l.id, l.created_at, c.first_name, l.quote, l.charges, l.status, l.archive from leads l left join customers c on l.customer_id = c.id where l.orgid = ${orgid} and l.created_at > ${datePull.start.toString()} and l.created_at < ${datePull.end.toString()}`;
+
+	// and l.created_at < ${datePull.end.toString()}
 
 	//List of customers is pulled so that when a user attempts to add a new lead for an existing customer, the list is already generated.
 	const customers =
@@ -63,6 +66,7 @@ export const actions = {
 		 * @typedef {object} NewCustomer
 		 * @property {string} orgid
 		 * @property {string} created_by
+		 * @property {string} created_at
 		 * @property {string} first_name
 		 * @property {string} last_name
 		 * @property {string} email
@@ -84,6 +88,7 @@ export const actions = {
 			newCustomer = {
 				orgid,
 				created_by: uid,
+				// created_at: data.created_at,
 				first_name: data.first_name === '' ? null : data.first_name,
 				last_name: data.last_name === '' ? null : data.last_name,
 				email: data.email || null,
