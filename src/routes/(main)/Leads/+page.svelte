@@ -720,6 +720,16 @@
 					Customer Information
 				</section>
 				<ul class={nlULStyle}>
+					<!-- <label hidden for="created_at" />
+					<input
+						name=""
+						hidden
+						type="text"
+						value={() => {
+							const newDate = new Date();
+							return newDate;
+						}}
+					/> -->
 					<li class="hidden">
 						<label for="existingCustomer" />
 						<input name="existingCustomer" value={customerLoaded} />

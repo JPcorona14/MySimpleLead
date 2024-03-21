@@ -37,12 +37,12 @@
 			<div
 				in:fly={{ x: -1000, duration: 500 }}
 				out:fly={{ x: -1000, duration: 500 }}
-				class="bg-main absolute flex h-screen w-full flex-col justify-start border border-none text-white shadow-md shadow-gray-500 md:ml-2 md:mt-2 md:w-44 md:rounded-lg"
+				class="absolute flex h-screen w-full flex-col justify-start border border-none bg-main text-white shadow-md shadow-gray-500 md:ml-2 md:mt-2 md:w-44 md:rounded-lg"
 			>
 				<div class="flex w-full justify-end">
 					<button
 						on:click={() => (menuActive = false)}
-						class=" bg-bad/75 mr-5 mt-5 h-12 w-12 rounded-full shadow-md shadow-gray-900">X</button
+						class=" mr-5 mt-5 h-12 w-12 rounded-full bg-bad/75 shadow-md shadow-gray-900">X</button
 					>
 				</div>
 				<div class="flex flex-col">
@@ -117,7 +117,7 @@
 			<div>
 				<button
 					on:click={() => (menuActive = true)}
-					class="bg-main absolute left-8 top-10 flex h-16 w-16 justify-center rounded-full text-white shadow-md shadow-gray-500"
+					class="absolute left-8 top-10 flex h-16 w-16 justify-center rounded-full bg-main text-white shadow-md shadow-gray-500"
 				>
 					<div class="mb-auto mt-auto h-10 w-10">
 						<GoThreeBars />
@@ -136,7 +136,7 @@
 {:else}
 	<section class="flex h-screen">
 		<div
-			class="bg-main flex h-[99%] w-44 flex-col justify-start border border-none text-white shadow-md shadow-gray-500 md:ml-2 md:mt-2 md:rounded-lg"
+			class="flex h-[99%] w-44 flex-col justify-start border border-none bg-main text-white shadow-md shadow-gray-500 md:ml-2 md:mt-2 md:rounded-lg"
 		>
 			<div class="flex flex-col">
 				<h2 class="mb-5 ml-auto mr-auto mt-10 text-2xl font-bold">Menu</h2>
