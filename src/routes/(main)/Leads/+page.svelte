@@ -112,7 +112,7 @@
 
 	//Leads
 	const containerStyle =
-		' bg-secondary md:h-[98%] rounded-lg md:w-1/5 w-[95%] md:ml-0 md:mr-0 ml-auto mr-auto flex flex-col justify-start pt-10 pb-10 shadow-gray-500 shadow-md text-xl font-semibold md:mb-0 mb-5';
+		' bg-secondary rounded-lg md:w-1/5 w-[95%] md:ml-0 md:mr-0 ml-auto mr-auto flex flex-col justify-start pt-10 pb-10 shadow-gray-500 shadow-md text-xl font-semibold md:mb-0 mb-5 overflow-scroll md:h-full';
 	const containerTitleStyle = 'text-center md:text-2xl text-3xl';
 
 	const showArchived = () => {
@@ -412,7 +412,7 @@
 
 <Toaster />
 <div
-	class={`ml-auto mr-auto flex h-full w-[90%] flex-col justify-center md:ml-0 md:mr-0 md:w-full `}
+	class={`justify-cente ml-auto mr-auto flex h-full w-[90%] flex-col md:ml-0 md:mr-0 md:w-full `}
 >
 	<section class="flex flex-col-reverse justify-between md:flex-row">
 		<div class="mb-5 mt-auto flex flex-col justify-center md:mb-0 md:w-1/3 md:justify-start">
@@ -507,7 +507,7 @@
 	</section>
 
 	<section
-		class="ml-auto mr-auto flex h-full w-full flex-col justify-start md:flex-row md:justify-evenly"
+		class="ml-auto mr-auto flex w-full flex-col justify-start md:h-3/4 md:flex-row md:justify-evenly"
 	>
 		<!-- New Leads -->
 		<ul class={containerStyle} on:drop={(e) => assignedDrop(e, 'New Lead')} on:dragover={dragOver}>
@@ -516,7 +516,7 @@
 				<h4 class={containerTitleStyle}>New Leads</h4>
 				<div class="mb-auto mt-auto w-1/5 text-end">{newLeadsValue}</div>
 			</div>
-			<div class="flex h-full flex-col">
+			<div class="flex flex-col">
 				{#each displayList as lead (lead.id)}
 					{#if lead.Status === 'New Lead'}
 						<LeadCard
@@ -567,7 +567,7 @@
 				<h4 class={containerTitleStyle}>Quoted</h4>
 				<div class="mb-auto mt-auto w-1/5 text-end">{quotedValue}</div>
 			</div>
-			<div class="flex h-full flex-col">
+			<div class="flex flex-col">
 				{#each displayList as lead}
 					{#if lead.Status === 'Quoted'}
 						<LeadCard
@@ -586,13 +586,13 @@
 		<!-- Won/Lost -->
 		<!-- -------- -->
 		<container
-			class="ml-auto mr-auto flex w-[95%] flex-col justify-between md:ml-0 md:mr-0 md:h-[98%] md:w-1/5"
+			class="ml-auto mr-auto flex w-[95%] flex-col justify-between md:ml-0 md:mr-0 md:h-full md:w-1/5"
 		>
 			<!-- --- -->
 			<!-- Won -->
 			<!-- --- -->
 			<ul
-				class="mb-5 flex h-96 flex-col justify-center overflow-hidden rounded-lg bg-main pt-10 text-xl font-semibold shadow-md shadow-gray-500 md:mb-0 md:h-[49%]"
+				class="mb-5 flex h-96 flex-col justify-center overflow-hidden rounded-lg bg-main pb-2 pt-10 text-xl font-semibold shadow-md shadow-gray-500 md:mb-0 md:h-[49%]"
 				on:drop={(e) => assignedDrop(e, 'Won')}
 				on:dragover={dragOver}
 			>
