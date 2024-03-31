@@ -28,15 +28,15 @@
 	id={leadID}
 	draggable="true"
 	on:drag={todoDragging}
-	class="bg-white text-lg border rounded-lg w-5/6 ml-auto mr-auto mt-2 shadow-gray-500 shadow-md"
+	class="ml-auto mr-auto mt-2 w-5/6 rounded-lg border bg-white text-lg shadow-md shadow-gray-500"
 	on:click={() => goto(`./Leads/${leadID}`)}
 >
-	<ul class="flex justify-between flex-col h-full p-4 pb-2 overflow-hidden">
-		<li class="flex flex-wrap justify-between h-1/3">
-			<div class="text-black font-bold">{fName}</div>
+	<ul class="flex h-full flex-col justify-between overflow-hidden p-4 pb-2 text-sm">
+		<li class="flex h-1/3 flex-wrap justify-between">
+			<div class="font-bold text-black">{fName}</div>
 			<div class=" text-green-600">{quote ? `$${quote}` : '-'}</div>
 		</li>
-		<li class="text-black font-normal pt-2 text-start text-wrap">
+		<li class="text-wrap pt-2 text-start font-normal text-black">
 			{charges}
 		</li>
 	</ul>
