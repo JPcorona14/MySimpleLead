@@ -61,17 +61,20 @@
 	};
 </script>
 
-<li class={`mb-4 mt-2 flex w-full flex-col justify-start md:mb-2 md:w-1/2 md:flex-row ${order}`}>
-	<label class="mb-1 text-2xl font-bold md:mb-0 md:w-2/5 md:text-xl" for={fieldName}
-		>{displayName}:</label
+<li
+	class={`mb-4 mt-2 flex w-full flex-col justify-start md:mb-2 md:mr-5 md:w-fit md:min-w-64 md:flex-row ${order}`}
+>
+	<label
+		class="mb-1 text-2xl font-bold md:mb-auto md:mt-auto md:w-1/4 md:min-w-36 md:text-base"
+		for={fieldName}>{displayName}:</label
 	>
 	{#if copyField}
-		<div class="flex w-full md:w-1/2">
+		<div class="flex w-full md:mb-auto md:mt-auto md:max-h-8 md:w-3/4 md:min-w-72">
 			<input
 				name={fieldName}
 				type="text"
 				value={currentValue}
-				class="w-full rounded-l-lg border pb-1 pl-2 pr-2 pt-1 text-end shadow-sm shadow-gray-300 md:w-3/4 md:text-start"
+				class="w-full rounded-l-lg border pb-1 pl-2 pr-2 pt-1 text-end shadow-sm shadow-gray-300 md:w-3/4 md:min-w-48 md:text-start md:text-base"
 				placeholder="-"
 				on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
 				on:blur={(e) => updateCustomerField(e.target?.value)}
@@ -82,19 +85,21 @@
 					navigator.clipboard.writeText(currentValue);
 					toast.success('Clipboard: ' + currentValue);
 				}}
-				class="w-1/4 rounded-r-lg bg-secondary text-white shadow-sm shadow-gray-300 hover:bg-secondary/75 active:scale-95"
+				class="w-1/4 rounded-r-lg bg-secondary text-white shadow-sm shadow-gray-300 hover:bg-secondary/75 active:scale-95 md:min-w-14"
 				><div class="h-6"><FaRegCopy /></div></button
 			>
 		</div>
 	{:else}
-		<input
-			name="occupation"
-			type="text"
-			value={currentValue}
-			placeholder="-"
-			class="w-full rounded-lg border pb-1 pl-2 pr-2 pt-1 text-end shadow-sm shadow-gray-300 md:w-1/2 md:text-start"
-			on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
-			on:blur={(e) => updateCustomerField(e.target?.value)}
-		/>
+		<div class="flex w-full md:mb-auto md:mt-auto md:max-h-8 md:w-3/4 md:min-w-72">
+			<input
+				name="occupation"
+				type="text"
+				value={currentValue}
+				placeholder="-"
+				class="w-full rounded-lg border pb-1 pl-2 pr-2 pt-1 text-end shadow-sm shadow-gray-300 md:text-start md:text-base"
+				on:keydown={(e) => (e.keyCode === 13 ? e.target?.blur() : '')}
+				on:blur={(e) => updateCustomerField(e.target?.value)}
+			/>
+		</div>
 	{/if}
 </li>

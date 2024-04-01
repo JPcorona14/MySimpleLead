@@ -350,7 +350,7 @@
 						<input
 							on:keydown={(e) => (e.keyCode == 13 ? e.target?.blur() : '')}
 							on:blur={(e) => updateQuote(e.target?.value)}
-							class="text-center text-2xl italic md:text-end"
+							class="bg-transparent text-center text-2xl italic md:text-end"
 							placeholder="-"
 							value={lead.quote ? formatter.format(lead.quote) : ''}
 						/>
@@ -387,8 +387,8 @@
 						>
 							Client Information
 						</div>
-						<div class="m-5 flex justify-center text-xl md:w-full">
-							<ul class="ml-auto mr-auto flex w-full flex-wrap">
+						<div class="flex justify-center text-xl md:mt-4 md:w-full">
+							<ul class="ml-auto mr-auto flex w-full flex-row flex-wrap justify-center">
 								{#each contactFields as item, index}
 									{#if item.isDropDown}
 										<LeadIdDropDownField
@@ -462,13 +462,22 @@
 					<!-- Case Information -->
 					<!-- - - - End - - -  -->
 					<!-- ------------------ -->
-					<section>
+
+					<!-- ------------------ -->
+					<!-- ----Documents----- -->
+					<!-- - - - Start - - -  -->
+					<!-- ------------------ -->
+					<!-- <section>
 						<div
 							class="mt-10 w-full rounded-lg bg-main pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
 						>
 							Documents
 						</div>
-					</section>
+					</section> -->
+					<!-- ------------------ -->
+					<!-- ----Documents----- -->
+					<!-- - - - End - - -  -->
+					<!-- ------------------ -->
 				</div>
 			</section>
 		</section>
