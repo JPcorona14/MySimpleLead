@@ -430,8 +430,8 @@
 						>
 							Case Details
 						</div>
-						<div class="m-5 flex justify-center text-xl md:w-full">
-							<ul class="ml-auto mr-auto flex w-full flex-wrap">
+						<div class="m-5 flex justify-center text-xl md:ml-auto md:mr-auto md:w-full">
+							<ul class="ml-auto mr-auto flex w-full flex-wrap md:justify-center">
 								{#each caseFields as item, index}
 									{#if item.isDropDown}
 										<LeadIdDropDownField
@@ -596,7 +596,7 @@
 		<div
 			in:fly={{ x: 1000, duration: 500 }}
 			out:fly={{ x: 1000, duration: 500 }}
-			class={`h-full md:visible md:relative md:flex md:w-1/4 md:p-4`}
+			class={`h-full md:visible md:relative md:flex md:w-1/4 md:min-w-[300px] md:p-4`}
 		>
 			<section
 				class="no-scrollbar h-full w-full overflow-scroll rounded-lg border bg-gray-100 shadow-md shadow-gray-500"
@@ -626,13 +626,6 @@
 					<li class="m-1 flex justify-center">
 						<button on:click={() => filterActivity('Email')} class={filterBtnStyle}>Emails</button>
 					</li>
-					<!-- <li class="m-1 flex justify-center">
-					<button
-						on:click={() => filterActivity('Document')}
-						class={filterBtnStyle}
-						>Documents</button
-					>
-				</li> -->
 					<li class="m-1 flex justify-center">
 						<button
 							on:click={() => filterActivity('X')}
@@ -641,6 +634,8 @@
 						>
 					</li>
 				</ul>
+
+				<!-- Set Task -->
 
 				<!-- Add New Activity Button -->
 				<button on:click={() => (newActivity = !newActivity)} class="mb-4 w-full rounded-lg">
