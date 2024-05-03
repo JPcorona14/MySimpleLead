@@ -112,7 +112,7 @@
 
 	//Leads
 	const containerStyle =
-		' bg-secondary md:h-[98%] rounded-lg md:w-1/5 w-[95%] md:ml-0 md:mr-0 ml-auto mr-auto flex flex-col justify-start pt-10 pb-10 shadow-gray-500 shadow-md text-xl font-semibold md:mb-0 mb-5';
+		'bg-secondary rounded-lg md:w-1/5 w-[95%] md:ml-0 md:mr-0 ml-auto mr-auto flex flex-col justify-start pt-5 pb-5 shadow-gray-500 shadow-md text-xl font-semibold md:mb-0 mb-5 overflow-scroll no-scrollbar';
 	const containerTitleStyle = 'text-center md:text-2xl text-3xl';
 
 	const showArchived = () => {
@@ -412,9 +412,11 @@
 
 <Toaster />
 <div
-	class={`ml-auto mr-auto flex h-full w-[90%] flex-col justify-center md:ml-0 md:mr-0 md:w-full `}
+	class="ml-auto mr-auto flex w-[90%] flex-col justify-start md:ml-0 md:mr-0 md:h-full md:w-full"
 >
-	<section class="flex flex-col-reverse justify-between md:flex-row">
+	<section
+		class="mb-0 flex flex-col-reverse justify-between pb-4 md:h-[10%] md:min-h-36 md:flex-row"
+	>
 		<div class="mb-5 mt-auto flex flex-col justify-center md:mb-0 md:w-1/3 md:justify-start">
 			<div
 				class="flex justify-center text-center text-2xl md:ml-14 md:w-[300px] md:justify-between md:text-base"
@@ -432,10 +434,8 @@
 					>Show Archive:</label
 				>
 			</div>
-			<section class="mb-4 ml-2 mr-2 md:ml-14 md:mr-14">
-				<div
-					class="md:w-784 mb-2 flex flex-col justify-center md:w-[300px] md:flex-row md:justify-between"
-				>
+			<section class="ml-2 mr-2 md:ml-14 md:mr-14">
+				<div class="mb-2 flex flex-col justify-center md:w-[300px] md:flex-row md:justify-between">
 					<div class="ml-auto mr-auto text-xl font-bold md:ml-0 md:mr-0 md:pr-5 md:text-base">
 						Create Date Range:
 					</div>
@@ -491,9 +491,13 @@
 				</div>
 			</section>
 		</div>
-		<h1 class="mb-5 ml-auto mr-auto mt-5 text-center text-6xl font-semibold md:mt-24 md:w-1/3">
-			Leads
-		</h1>
+		<div class="flex flex-col justify-center">
+			<h1
+				class="mb-5 ml-auto mr-auto mt-5 text-center text-6xl font-semibold md:mb-0 md:mt-0 md:w-1/3"
+			>
+				Leads
+			</h1>
+		</div>
 		<div class="flex w-full pr-2 md:w-1/3 md:justify-end md:pr-16">
 			<button
 				on:click={() => (newLead = true)}
@@ -507,16 +511,16 @@
 	</section>
 
 	<section
-		class="ml-auto mr-auto flex h-full w-full flex-col justify-start md:flex-row md:justify-evenly"
+		class="mb-5 ml-auto mr-auto flex h-full w-full flex-col justify-start md:mb-0 md:h-[90%] md:min-h-[70%] md:flex-row md:justify-evenly"
 	>
 		<!-- New Leads -->
 		<ul class={containerStyle} on:drop={(e) => assignedDrop(e, 'New Lead')} on:dragover={dragOver}>
 			<div class="flex justify-evenly">
 				<div class="w-1/5" />
 				<h4 class={containerTitleStyle}>New Leads</h4>
-				<div class="mb-auto mt-auto w-1/5 text-end">{newLeadsValue}</div>
+				<div class="mb-auto mt-auto w-1/5 text-end font-normal">{newLeadsValue}</div>
 			</div>
-			<div class="flex h-full flex-col">
+			<div class="flex flex-col">
 				{#each displayList as lead (lead.id)}
 					{#if lead.Status === 'New Lead'}
 						<LeadCard
@@ -540,7 +544,7 @@
 			<div class="flex justify-evenly">
 				<div class="w-1/5" />
 				<h4 class={containerTitleStyle}>Contacted</h4>
-				<div class="mb-auto mt-auto w-1/5 text-end">{contactedValue}</div>
+				<div class="mb-auto mt-auto w-1/5 text-end font-normal">{contactedValue}</div>
 			</div>
 			<div class="flex h-full flex-col">
 				{#each displayList as lead (lead.id)}
@@ -565,9 +569,9 @@
 			<div class="flex justify-evenly">
 				<div class="w-1/5" />
 				<h4 class={containerTitleStyle}>Quoted</h4>
-				<div class="mb-auto mt-auto w-1/5 text-end">{quotedValue}</div>
+				<div class="mb-auto mt-auto w-1/5 text-end font-normal">{quotedValue}</div>
 			</div>
-			<div class="flex h-full flex-col">
+			<div class="flex flex-col">
 				{#each displayList as lead}
 					{#if lead.Status === 'Quoted'}
 						<LeadCard
@@ -586,20 +590,20 @@
 		<!-- Won/Lost -->
 		<!-- -------- -->
 		<container
-			class="ml-auto mr-auto flex w-[95%] flex-col justify-between md:ml-0 md:mr-0 md:h-[98%] md:w-1/5"
+			class="ml-auto mr-auto flex w-[95%] flex-col justify-between md:ml-0 md:mr-0 md:w-1/5"
 		>
 			<!-- --- -->
 			<!-- Won -->
 			<!-- --- -->
 			<ul
-				class="mb-5 flex h-96 flex-col justify-center overflow-hidden rounded-lg bg-main pt-10 text-xl font-semibold shadow-md shadow-gray-500 md:mb-0 md:h-[49%]"
+				class="mb-5 flex h-96 flex-col justify-center overflow-hidden rounded-lg bg-main pb-2 pt-5 text-xl font-semibold shadow-md shadow-gray-500 md:mb-0 md:h-[49%]"
 				on:drop={(e) => assignedDrop(e, 'Won')}
 				on:dragover={dragOver}
 			>
 				<div class="flex justify-evenly text-white">
 					<div class="w-1/5" />
 					<h4 class="text-center text-3xl text-white md:text-2xl">Won</h4>
-					<div class="mb-auto mt-auto w-1/5 text-end">{wonValue}</div>
+					<div class="mb-auto mt-auto w-1/5 text-end font-normal">{wonValue}</div>
 				</div>
 				<div class="no-scrollbar flex h-full flex-col overflow-y-scroll pb-10">
 					{#each displayList as lead}
@@ -620,14 +624,14 @@
 			<!-- Lost -->
 			<!---------->
 			<ul
-				class="mb-5 flex flex-col justify-center overflow-hidden rounded-lg bg-bad pt-10 text-xl font-semibold shadow-md shadow-gray-500 md:mb-0 md:h-[49%]"
+				class="mb-24 flex flex-col justify-center overflow-hidden rounded-lg bg-bad pt-5 text-xl font-semibold shadow-md shadow-gray-500 md:mb-0 md:h-[49%]"
 				on:drop={(e) => assignedDrop(e, 'Lost')}
 				on:dragover={dragOver}
 			>
 				<div class="flex justify-evenly text-white">
 					<div class="w-1/5" />
 					<h4 class="text-center text-3xl text-white md:text-2xl">Lost</h4>
-					<div class="mb-auto mt-auto w-1/5 text-end">{lostValue}</div>
+					<div class="mb-auto mt-auto w-1/5 text-end font-normal">{lostValue}</div>
 				</div>
 				<div class="no-scrollbar flex h-full flex-col overflow-y-scroll pb-10">
 					{#each displayList as lead}

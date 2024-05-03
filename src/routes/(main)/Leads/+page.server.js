@@ -18,8 +18,8 @@ export async function load({ locals }) {
 
 	//Set dates to pull from 30 days before today and up to tomorrow to capture everything to the end of today
 	const datePull = {
-		start: new CalendarDate(dates.year, dates.month, dates.day).subtract({ days: 30 }),
-		end: new CalendarDate(dates.year, dates.month, dates.day).add({ days: 1 })
+		start: new CalendarDate(dates.year, dates.month, dates.day).subtract({ days: 7 }),
+		end: new CalendarDate(dates.year, dates.month, dates.day).add({ days: 2 })
 	};
 
 	//List of Leads are pulled from the server to then generate the leads break out by card in each board

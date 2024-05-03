@@ -1,5 +1,17 @@
-<script>
+<script lang="ts">
 	// @ts-ignore
+	import CalendarIcon from 'svelte-radix/Calendar.svelte';
+	import {
+		type DateValue,
+		DateFormatter,
+		getLocalTimeZone,
+		toLocalTimeZone
+	} from '@internationalized/date';
+	import { cn } from '$lib/utils.js';
+	import { Button } from '$lib/components/ui/button';
+	import { Calendar } from '$lib/components/ui/calendar';
+	import * as Popover from '$lib/components/ui/popover';
+
 	import { fly } from 'svelte/transition';
 	import FaList from 'svelte-icons/fa/FaList.svelte';
 	import FaLevelUpAlt from 'svelte-icons/fa/FaLevelUpAlt.svelte';
@@ -7,12 +19,33 @@
 	import toast, { Toaster } from 'svelte-french-toast';
 	import LeadIdInputField from '$lib/LeadIDInputField.svelte';
 	import LeadIdDropDownField from 'src/lib/LeadIdDropDownField.svelte';
-	import { text } from '@sveltejs/kit';
 	export let data;
+
+	const df = new DateFormatter('en-US', {
+		dateStyle: 'short'
+	});
+
+	let taskDueDate: DateValue | undefined = undefined;
+	let taskDueTime = '09:00';
+
+	let tasks: {
+		id: any;
+		created_at: any;
+		active: boolean;
+		edit: boolean;
+		text: string | any;
+		completed: boolean;
+		due: any;
+		newDueDate: DateValue | undefined;
+		dueDate: any | null;
+		dueTime: any | null;
+	}[] = data.task;
+
 	let contact = data.contact;
 	let lead = data.lead;
 	let activity = data.activity.sort((a, b) => b.id - a.id);
 	let newActivity = false;
+	let newActivityValue = 'Note';
 	let viewActivity = false;
 	let isMobile = false;
 
@@ -133,6 +166,39 @@
 		return { ...e, created_at: updateTime };
 	});
 
+	tasks = tasks.map((e) => {
+		// Create Date and Time
+		const createDate = new Date(e.created_at);
+		const formattedCreateDate = createDate.toLocaleDateString('en-US');
+		let createHour = createDate.getHours() % 12;
+		createHour = createHour ? createHour : 12;
+		const createMinute = createDate.getMinutes().toString().padStart(2, '0');
+		const createAMPM = createDate.getHours() < 12 ? 'AM' : 'PM';
+		const updatedCreateDateTime = `${formattedCreateDate} ${createHour}:${createMinute} ${createAMPM}`;
+
+		// Due Date and Time
+		const thisDueDate = new Date(e.due);
+		const formattedDueDate = thisDueDate.toLocaleDateString('en-US');
+		let dueHour = thisDueDate.getHours().toString() % '12';
+		dueHour = dueHour ? dueHour.toString().padStart(2, '0') : '12';
+		const dueMinute = thisDueDate.getMinutes().toString().padStart(2, '0');
+		const dueAMPM = thisDueDate.getHours() < 12 ? 'AM' : 'PM';
+		const updatedDueDateTime = `${formattedDueDate} ${dueHour}:${dueMinute} ${dueAMPM}`;
+
+		// Due Date only for Pop Up calendar
+		const calendarDueDate = df.format(thisDueDate);
+		const calendarDueTime = `${dueAMPM === 'PM' ? (Number(dueHour) + 12).toString() : dueHour}:${dueMinute}`;
+
+		return {
+			...e,
+			created_at: updatedCreateDateTime,
+			due: updatedDueDateTime,
+			newDueDate: undefined,
+			dueDate: formattedDueDate,
+			dueTime: calendarDueTime
+		};
+	});
+
 	/** @param {string} filt*/
 	const filterActivity = (filt) => {
 		activity = data.activity.sort((a, b) => b.id - a.id);
@@ -234,11 +300,11 @@
 	const editActivity = async (event) => {
 		event?.preventDefault();
 		const formData = new FormData(event?.target);
-		const data = Object.fromEntries(formData.entries());
-		const currentActivity = activity[data.i];
+		const newData = Object.fromEntries(formData.entries());
+		const currentActivity = activity[newData.i];
 
-		if (currentActivity.text !== data.text || currentActivity.type !== data.type) {
-			console.log(data);
+		if (currentActivity.text !== newData.text || currentActivity.type !== newData.type) {
+			console.log(newData);
 			try {
 				fetch('/api/Leads/Activity/UpdateActivity', {
 					method: 'POST',
@@ -246,16 +312,16 @@
 						'content-type': 'application/json'
 					},
 					body: JSON.stringify({
-						id: data.activity_id,
-						type: data.type,
-						text: data.text
+						id: newData.activity_id,
+						type: newData.type,
+						text: newData.text
 					})
 				})
 					.then((r) => r.json())
 					.then((res) => {
 						console.log(res);
-						activity[data.i].type = res.activity[0].type;
-						activity[data.i].text = res.activity[0].text;
+						activity[newData.i].type = res.activity[0].type;
+						activity[newData.i].text = res.activity[0].text;
 					});
 			} catch (err) {
 				console.log(err);
@@ -265,6 +331,60 @@
 		}
 
 		activity[data.i].edit = false;
+	};
+
+	const editTaskCompleted = async (event) => {
+		event?.preventDefault();
+		const formData = new FormData(event?.target);
+		const currentTask = Object.fromEntries(formData.entries());
+		const index = Number(currentTask.index);
+
+		try {
+			await fetch('/api/Leads/Tasks/UpdateTaskCompleted', {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json'
+				},
+				body: JSON.stringify({
+					id: tasks[index].id,
+					completed: !tasks[index].completed
+				})
+			})
+				.then((r) => r.json())
+				.then((res) => {
+					tasks[index].completed = res.task[0].completed;
+				});
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+	const editTaskDetails = async (event) => {
+		event?.preventDefault();
+		const formData = new FormData(event?.target);
+		const currentTask = Object.fromEntries(formData.entries());
+		const index = Number(currentTask.index);
+
+		try {
+			fetch('/api/Leads/Tasks/UpdateTaskDetails', {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json'
+				},
+				body: JSON.stringify({
+					id: tasks[index].id,
+					dueDate: currentTask.taskDate,
+					dueTime: currentTask.taskTime,
+					text: currentTask.text
+				})
+			})
+				.then((r) => r.json())
+				.then((res) => {
+					console.log(res);
+				});
+		} catch (err) {
+			console.log(err);
+		}
 	};
 
 	onMount(() => {
@@ -279,9 +399,20 @@
 		textBody += `Charges: ${lead.charges} \n`;
 
 		for (let i = 0; i < contactFields.length; i++) {
-			if (contact[contactFields[i].fieldName]) {
+			if (contact[contactFields[i].fieldName] && contactFields[i].displayName !== 'Relationship') {
 				textBody +=
 					contactFields[i].displayName + ': ' + contact[contactFields[i].fieldName] + '\n';
+			}
+
+			if (
+				contactFields[i].displayName === 'Relationship' &&
+				contact[contactFields[i].fieldName] !== null
+			) {
+				textBody +=
+					contactFields[i].displayName +
+					': ' +
+					(contact[contactFields[i].fieldName] ? 'Married' : 'Single') +
+					'\n';
 			}
 		}
 
@@ -302,13 +433,17 @@
 <div class="flex h-full w-[95%] flex-col md:w-full md:flex-row md:pl-10">
 	{#if !viewActivity}
 		<section class="md:w-3/4">
-			<section class="mb-10 mt-10 flex flex-col-reverse justify-between md:mt-10 md:flex-row">
-				<a
-					href="../Leads"
-					class=" ml-10 hidden h-12 w-12 justify-center rounded-full bg-main text-3xl text-white no-underline shadow-md shadow-gray-500 hover:bg-main/75 active:scale-95 md:visible md:flex"
-					><div class="mb-auto mt-auto">&lt;</div></a
-				>
-				<div class="mt-5 flex flex-col md:mt-0">
+			<section
+				class="mb-10 mt-10 flex flex-col-reverse justify-between md:mt-10 md:flex-row md:flex-wrap"
+			>
+				<div class="md:flex-[1]">
+					<a
+						href="../Leads"
+						class=" ml-10 hidden h-12 w-12 justify-center rounded-full bg-main text-3xl text-white no-underline shadow-md shadow-gray-500 hover:bg-main/75 active:scale-95 md:visible md:flex"
+						><div class="mb-auto mt-auto">&lt;</div></a
+					>
+				</div>
+				<div class="mt-5 flex flex-col md:mt-0 md:min-w-96 md:flex-[2]">
 					<h1 class="text-center text-5xl font-bold">{contact.first_name} {contact.last_name}</h1>
 					<textarea
 						id="chargesTextArea"
@@ -327,10 +462,10 @@
 						>{lead.archive ? 'Restore' : 'Archive'}</button
 					>
 				</div>
-				<div class="mb-auto flex flex-col justify-start md:mr-10 md:w-12">
+				<div class="mb-auto flex flex-col justify-start md:mr-10 md:w-12 md:flex-[1]">
 					<div class="mb-5 flex justify-end">
 						<select
-							class="ml-auto mr-auto w-1/2 rounded-lg border border-none bg-main p-1 pl-5 pr-5 text-center text-2xl font-bold text-white shadow-md shadow-gray-500 md:w-fit"
+							class="ml-auto mr-auto mt-0 w-1/2 rounded-lg border border-none bg-main p-1 pl-5 pr-5 text-center text-2xl font-bold text-white shadow-md shadow-gray-500 md:mr-0 md:mt-10 md:w-fit lg:mt-0"
 							on:change={(e) => updateLeadField('status', e.target?.value)}
 						>
 							<option value="New Lead" selected={lead.status === 'New Lead' ? true : false}
@@ -350,7 +485,7 @@
 						<input
 							on:keydown={(e) => (e.keyCode == 13 ? e.target?.blur() : '')}
 							on:blur={(e) => updateQuote(e.target?.value)}
-							class="text-center text-2xl italic md:text-end"
+							class="bg-transparent text-center text-2xl italic md:text-end"
 							placeholder="-"
 							value={lead.quote ? formatter.format(lead.quote) : ''}
 						/>
@@ -387,8 +522,8 @@
 						>
 							Client Information
 						</div>
-						<div class="m-5 flex justify-center text-xl md:w-full">
-							<ul class="ml-auto mr-auto flex w-full flex-wrap">
+						<div class="flex justify-center text-xl md:mt-4 md:w-full">
+							<ul class="ml-auto mr-auto flex w-full flex-row flex-wrap justify-center">
 								{#each contactFields as item, index}
 									{#if item.isDropDown}
 										<LeadIdDropDownField
@@ -396,7 +531,7 @@
 											fieldType="contact"
 											fieldName={item.fieldName}
 											displayName={item.displayName}
-											currentValue={contact[item.fieldName]}
+											bind:currentValue={contact[item.fieldName]}
 											fieldOptions={item.options}
 											order={item.order}
 										/>
@@ -430,8 +565,8 @@
 						>
 							Case Details
 						</div>
-						<div class="m-5 flex justify-center text-xl md:w-full">
-							<ul class="ml-auto mr-auto flex w-full flex-wrap">
+						<div class="m-5 flex justify-center text-xl md:ml-auto md:mr-auto md:w-full">
+							<ul class="ml-auto mr-auto flex w-full flex-wrap md:justify-center">
 								{#each caseFields as item, index}
 									{#if item.isDropDown}
 										<LeadIdDropDownField
@@ -439,7 +574,7 @@
 											fieldID={lead.id}
 											fieldName={item.field}
 											displayName={item.displayName}
-											currentValue={lead[item.field]}
+											bind:currentValue={lead[item.field]}
 											fieldOptions={item.options}
 											order={item.order}
 										/>
@@ -450,7 +585,7 @@
 											fieldType={'lead'}
 											fieldName={item.field}
 											displayName={item.displayName}
-											currentValue={lead[item.field]}
+											bind:currentValue={lead[item.field]}
 											order={item.order}
 										/>
 									{/if}
@@ -462,13 +597,22 @@
 					<!-- Case Information -->
 					<!-- - - - End - - -  -->
 					<!-- ------------------ -->
-					<section>
+
+					<!-- ------------------ -->
+					<!-- ----Documents----- -->
+					<!-- - - - Start - - -  -->
+					<!-- ------------------ -->
+					<!-- <section>
 						<div
 							class="mt-10 w-full rounded-lg bg-main pb-2 pt-2 text-center text-2xl font-bold text-white shadow-md shadow-gray-500"
 						>
 							Documents
 						</div>
-					</section>
+					</section> -->
+					<!-- ------------------ -->
+					<!-- ----Documents----- -->
+					<!-- - - - End - - -  -->
+					<!-- ------------------ -->
 				</div>
 			</section>
 		</section>
@@ -587,7 +731,7 @@
 		<div
 			in:fly={{ x: 1000, duration: 500 }}
 			out:fly={{ x: 1000, duration: 500 }}
-			class={`h-full md:visible md:relative md:flex md:w-1/4 md:p-4`}
+			class={`h-full md:visible md:relative md:flex md:w-1/4 md:min-w-[300px] md:p-4`}
 		>
 			<section
 				class="no-scrollbar h-full w-full overflow-scroll rounded-lg border bg-gray-100 shadow-md shadow-gray-500"
@@ -617,13 +761,6 @@
 					<li class="m-1 flex justify-center">
 						<button on:click={() => filterActivity('Email')} class={filterBtnStyle}>Emails</button>
 					</li>
-					<!-- <li class="m-1 flex justify-center">
-					<button
-						on:click={() => filterActivity('Document')}
-						class={filterBtnStyle}
-						>Documents</button
-					>
-				</li> -->
 					<li class="m-1 flex justify-center">
 						<button
 							on:click={() => filterActivity('X')}
@@ -632,6 +769,8 @@
 						>
 					</li>
 				</ul>
+
+				<!-- Set Task -->
 
 				<!-- Add New Activity Button -->
 				<button on:click={() => (newActivity = !newActivity)} class="mb-4 w-full rounded-lg">
@@ -643,7 +782,7 @@
 						{newActivity ? 'Cancel' : '+ Activity'}
 					</div>
 				</button>
-				<ul class="w-full">
+				<ul class="w-full md:text-sm">
 					{#if newActivity}
 						<form method="POST" action="?/newActivity">
 							<li class="mb-4 ml-4 mr-4 rounded-lg bg-white p-4 shadow-md shadow-gray-500">
@@ -651,11 +790,11 @@
 									<label for="lead_id" hidden />
 									<input name="lead_id" value={data.id} hidden />
 									<label for="type" hidden />
-									<select name="type">
+									<select name="type" bind:value={newActivityValue}>
 										<option value="Call" class="font-bold">Call</option>
-										<option value="Document" class="font-bold">Document</option>
 										<option value="Email" class="font-bold">Email</option>
 										<option value="Note" selected class="font-bold">Notes</option>
+										<option value="Task" class="font-bold">Task</option>
 									</select>
 									<button
 										id="submitNote"
@@ -663,6 +802,51 @@
 										>Save</button
 									>
 								</div>
+
+								<!-- Set New Task -->
+								<!-- Start -->
+								{#if newActivityValue === 'Task'}
+									<div class="w-full rounded-md">
+										<label for="taskDate" hidden />
+										<input name="taskDate" bind:value={taskDueDate} hidden />
+										<div class="mb-2 mt-2 flex justify-between">
+											<div class="w-1/2">
+												<Popover.Root openFocus>
+													<Popover.Trigger asChild let:builder>
+														<Button
+															variant="outline"
+															class={cn(
+																'w-full justify-start border-none pl-2 text-left font-normal shadow-none',
+																!taskDueDate && 'text-muted-foreground'
+															)}
+															builders={[builder]}
+														>
+															<CalendarIcon class="mr-2 h-4 w-4" />
+															{taskDueDate
+																? df.format(taskDueDate.toDate(getLocalTimeZone()))
+																: 'Select a date'}
+														</Button>
+													</Popover.Trigger>
+													<Popover.Content class="w-auto p-0">
+														<Calendar bind:value={taskDueDate} initialFocus />
+													</Popover.Content>
+												</Popover.Root>
+											</div>
+											<div class="flex w-1/2 min-w-24 justify-center rounded-lg hover:bg-gray-100">
+												<label for="taskTime" hidden />
+												<input
+													name="taskTime"
+													type="time"
+													placeholder={taskDueTime}
+													bind:value={taskDueTime}
+													class="bg-transparent"
+												/>
+											</div>
+										</div>
+									</div>
+								{/if}
+								<!-- End -->
+
 								<lable for="text" hidden />
 								<textarea
 									id="newCommentTextArea"
@@ -683,8 +867,199 @@
 						</form>
 					{/if}
 
+					<!-- List Task -->
+
+					{#each tasks as task, index}
+						<li
+							on:mouseenter={() => (task.active = true)}
+							on:mouseleave={() => (task.active = false)}
+							id={task.id}
+							class="mb-4 ml-4 mr-4 rounded-lg bg-white p-4 shadow-md shadow-gray-500"
+						>
+							<!-- ---------------- -->
+							<!-- Task View - Base -->
+							<!-- ---------------- -->
+							{#if !task.edit}
+								<div class="flex flex-col justify-between">
+									{#if task.completed}
+										<div
+											class="mb-2 border-b border-t bg-secondary text-center text-base font-bold"
+										>
+											Task Completed
+										</div>
+									{:else}
+										<div
+											class="mb-2 border-b border-t bg-secondary text-center text-base font-bold"
+										>
+											Task
+										</div>
+									{/if}
+									<div class="flex justify-between">
+										<div class="font-bold">Created:</div>
+										<div class="">{task.created_at}</div>
+									</div>
+									<div class="flex justify-between">
+										<div class="font-bold">Due:</div>
+										<div class="">{task.due}</div>
+									</div>
+								</div>
+
+								<p class=" whitespace-pre-line">{task.text}</p>
+
+								<!-- ----------------------- -->
+								<!-- Task - Completed Button -->
+								<!-- ----------------------- -->
+								{#if !task.completed}
+									<form on:submit|preventDefault={editTaskCompleted} class="m-2">
+										<label for="id" hidden />
+										<input name="id" value={task.id} hidden />
+										<label for="index" hidden />
+										<input name="index" value={index} hidden />
+										<label for="completed" hidden />
+										<input name="completed" value={task.completed} hidden />
+										<button
+											class="h-full w-full scale-100 transform rounded-md bg-main pb-1 pt-1 font-bold text-white shadow-md shadow-gray-500 transition-transform duration-100 active:scale-95"
+											>Done</button
+										>
+									</form>
+								{/if}
+
+								<!-- --------------------- -->
+								<!-- Task View - Edit Mode -->
+								<!-- --------------------- -->
+							{:else}
+								<form
+									on:submit|preventDefault={editTaskDetails}
+									class="flex flex-col justify-center"
+								>
+									<label for="i" hidden />
+									<input name="i" value={index} hidden />
+									<label for="activity_id" hidden />
+									<input name="activity_id" value={task.id} hidden />
+
+									<div class="mb-2 border-b border-t bg-secondary text-center text-base font-bold">
+										Task
+									</div>
+
+									<div class="flex justify-between">
+										<div class="font-bold">Created:</div>
+										<div class="">{task.created_at}</div>
+									</div>
+									<div class="flex flex-col">
+										<div class="font-bold">Due:</div>
+										<div class="w-full rounded-md">
+											<label for="taskDate" hidden />
+											<input name="taskDate" bind:value={taskDueDate} hidden />
+											<div class="mb-2 mt-2 flex justify-between">
+												<div class="w-1/2">
+													<Popover.Root openFocus>
+														<Popover.Trigger asChild let:builder>
+															<Button
+																variant="outline"
+																class={cn(
+																	'w-full justify-start border-none pl-2 text-left font-normal shadow-none',
+																	!taskDueDate && 'text-muted-foreground'
+																)}
+																builders={[builder]}
+															>
+																<CalendarIcon class="mr-2 h-4 w-4" />
+																{task.newDueDate
+																	? df.format(task.newDueDate.toDate(getLocalTimeZone()))
+																	: task.dueDate
+																		? task.dueDate
+																		: 'Select a date'}
+															</Button>
+														</Popover.Trigger>
+														<Popover.Content class="w-auto p-0">
+															<Calendar bind:value={task.newDueDate} initialFocus />
+														</Popover.Content>
+													</Popover.Root>
+												</div>
+												<div
+													class="flex w-1/2 min-w-24 justify-center rounded-lg hover:bg-gray-100"
+												>
+													<label for="taskTime" hidden />
+													<input
+														name="taskTime"
+														type="time"
+														placeholder={task.dueTime}
+														bind:value={task.dueTime}
+														class="bg-transparent"
+													/>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<label for="text" hidden />
+									<textarea
+										name="text"
+										placeholder="Type here..."
+										class="min-h-24 w-full rounded-md border p-1"
+										value={task.text}
+									/>
+									<button
+										type="submit"
+										class="mb-2 mt-2 w-full transform rounded-md bg-good pb-1 pt-1 text-white shadow-md shadow-gray-500 transition-all duration-500 active:scale-95"
+										>Save</button
+									>
+								</form>
+							{/if}
+							{#if task.completed && task.edit}
+								<form class="m-2" on:submit|preventDefault={editTaskCompleted}>
+									<label for="id" hidden />
+									<input name="id" value={task.id} hidden />
+									<label for="index" hidden />
+									<input name="index" value={index} hidden />
+									<label for="completed" hidden />
+									<input name="completed" value={task.completed} hidden />
+									<button
+										class="h-full w-full scale-100 transform rounded-md bg-main/75 pb-1 pt-1 font-bold text-white shadow-md shadow-gray-500 transition-transform duration-100 active:scale-95"
+										>Mark Incomplete</button
+									>
+								</form>
+							{/if}
+							{#if task.active || task.edit}
+								<div class="mb-1 mt-2 flex justify-around">
+									<form method="POST" action="?/editActivity" class="w-2/5">
+										<label for="id" hidden />
+										<input name="id" value={task.id} hidden />
+										{#if task.edit}
+											<button
+												type="button"
+												on:click={() => {
+													task.edit = false;
+													task.text = task.text;
+												}}
+												class="h-full w-full rounded-md bg-orange-500 pb-1 pt-1 text-white shadow-md shadow-gray-500"
+												>Cancel</button
+											>
+										{:else}
+											<button
+												type="button"
+												on:click={() => (task.edit = true)}
+												class="h-full w-full rounded-md bg-good pb-1 pt-1 text-white shadow-md shadow-gray-500"
+												>Edit</button
+											>
+										{/if}
+									</form>
+									<form method="POST" action="?/deleteActivity" class="w-2/5">
+										<label for="id" hidden />
+										<input name="id" value={task.id} hidden />
+										<button
+											class="h-full w-full rounded-md bg-bad pb-1 pt-1 text-white shadow-md shadow-gray-500"
+											>Delete</button
+										>
+									</form>
+								</div>
+							{/if}
+						</li>
+					{/each}
+
 					<!-- List Past Activity -->
+
 					{#each activity as a, index}
+						<!-- <Activities currentActivity={act} {index} /> -->
 						<li
 							on:mouseenter={() => (a.type !== 'Event' ? (a.active = true) : '')}
 							on:mouseleave={() => (a.type !== 'Event' ? (a.active = false) : '')}
@@ -789,4 +1164,8 @@
 	.overflow-y-hidden {
 		overflow-y: hidden !important;
 	}
+
+	/* input[type='time']::-webkit-calendar-picker-indicator {
+		background: transparent;
+	} */
 </style>

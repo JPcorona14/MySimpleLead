@@ -7,16 +7,19 @@ export async function POST({ request }) {
 	let updates;
 	let isDate = false;
 
-	if (data.fieldName === 'date_of_incident') {
-		//Need to convert Dat of Birth to proper format first
+	if (data.fieldName === 'date_of_incident' || data.fieldName === 'next_court_date') {
+		//Need to convert Dates to proper format first
+		console.log(data.value);
 		const date = new Date(data.value);
 		const doi = date.toLocaleDateString('en-US', {
 			year: 'numeric',
 			month: '2-digit',
 			day: '2-digit'
 		});
+
+		console.log(doi);
 		updates = {
-			date_of_incident: doi
+			[data.fieldName]: doi
 		};
 		isDate = true;
 	} else {
@@ -24,6 +27,8 @@ export async function POST({ request }) {
 			[data.fieldName]: data.value
 		};
 	}
+
+	console.log(updates);
 
 	let updatedField = await sql`
 	update leads 
@@ -34,14 +39,14 @@ export async function POST({ request }) {
 
 	if (updatedField.length && isDate) {
 		updatedField = updatedField.map((e) => {
-			const date = new Date(e.date_of_incident);
+			const date = new Date(e[data.fieldName]);
 
 			const formattedDate = date.toISOString();
 			const month = Number(formattedDate.substring(5, 7));
 			const day = Number(formattedDate.slice(8, 10));
 			const year = formattedDate.substring(0, 4);
 
-			return { ...e, date_of_incident: `${month}/${day}/${year}` };
+			return { ...e, [data.fieldName]: `${month}/${day}/${year}` };
 		});
 	}
 
