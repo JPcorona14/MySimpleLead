@@ -104,7 +104,7 @@
 		dateStyle: 'medium'
 	});
 	let value: DateRange | undefined = {
-		start: new CalendarDate(today.year, today.month, today.day).subtract({ days: 45 }),
+		start: new CalendarDate(today.year, today.month, today.day).subtract({ days: 7 }),
 		end: new CalendarDate(today.year, today.month, today.day)
 	};
 	let startValue: DateValue | undefined = undefined;
