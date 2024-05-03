@@ -39,6 +39,7 @@ export async function load({ params, locals }) {
 	let leads;
 	let loadFailed = false;
 	let leadActivity;
+	let leadTask;
 
 	try {
 		leads = await sql`
@@ -87,6 +88,9 @@ export async function load({ params, locals }) {
 		leadActivity =
 			await sql`select id, created_at, type, text from activity where lead_id = ${params.LeadID}`;
 
+		leadTask =
+			await sql`select id, created_at, due, text, completed from task where lead_id = ${params.LeadID}`;
+
 		// console.log(leadActivity);
 	} catch (err) {
 		console.log(err);
@@ -117,7 +121,7 @@ export async function load({ params, locals }) {
 		charges: leads.charges,
 		status: leads.status,
 		reason_for_visit: leads.reason_for_visit,
-		next_court_date: leads.next_court_date,
+		next_court_date: leads.next_court_date ? dateFormat(leads.next_court_date, false) : '',
 		next_court_reason: leads.next_court_reason,
 		current_attorney: leads.current_attorney,
 		npr: leads.npr,
@@ -135,7 +139,19 @@ export async function load({ params, locals }) {
 		};
 	});
 
-	return { id: params.LeadID, contact, lead, activity };
+	const task = leadTask.map((e) => {
+		return {
+			id: e.id,
+			created_at: e.created_at,
+			due: e.due,
+			text: e.text,
+			completed: e.completed,
+			active: false,
+			edit: false
+		};
+	});
+
+	return { id: params.LeadID, contact, lead, activity, task };
 }
 
 export const actions = {
@@ -144,26 +160,36 @@ export const actions = {
 		const orgid = locals.user.orgid;
 		const uid = locals.user.uid;
 		let postActivity;
-		const activity = {
-			orgid,
-			created_by: uid,
-			lead_id: data.lead_id,
-			type: data.type,
-			text: data.text
-		};
 
-		try {
-			postActivity = await sql`
-			insert into activity ${sql(
-				activity,
-				'orgid',
-				'created_by',
-				'lead_id',
-				'type',
-				'text'
-			)} returning *`;
-		} catch (err) {
-			console.log(err);
+		if (data.type === 'Task') {
+			const task = {
+				orgid,
+				created_by: uid,
+				lead_id: data.lead_id,
+				due: `${data.taskDate} ${data.taskTime}`,
+				text: data.text
+			};
+			try {
+				postActivity = await sql`
+				insert into task ${sql(task, 'orgid', 'created_by', 'lead_id', 'due', 'text')}`;
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			const activity = {
+				orgid,
+				created_by: uid,
+				lead_id: data.lead_id,
+				type: data.type,
+				text: data.text
+			};
+
+			try {
+				postActivity = await sql`
+				insert into activity ${sql(activity, 'orgid', 'created_by', 'lead_id', 'type', 'text')}`;
+			} catch (err) {
+				console.log(err);
+			}
 		}
 	},
 	editActivity: async ({ request, locals }) => {
