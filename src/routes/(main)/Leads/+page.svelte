@@ -113,6 +113,7 @@
 	//Leads
 	const containerStyle =
 		'bg-secondary rounded-lg md:w-1/5 w-[95%] md:ml-0 md:mr-0 ml-auto mr-auto flex flex-col justify-start pt-5 pb-5 shadow-gray-500 shadow-md text-xl font-semibold md:mb-0 mb-5 overflow-scroll no-scrollbar';
+
 	const containerTitleStyle = 'text-center md:text-2xl text-3xl';
 
 	const showArchived = () => {

@@ -14,6 +14,7 @@
 
 <ul
 	class="no-scrollbar mb-5 ml-auto mr-auto flex w-[95%] flex-col justify-start overflow-scroll rounded-lg bg-secondary pb-10 pt-10 text-xl font-semibold shadow-md shadow-gray-500 md:mb-0 md:ml-0 md:mr-0 md:h-[95%] md:w-1/5"
+
 	on:drop={(e) => assignedDrop(e, containerName)}
 	on:dragover={dragOver}
 >
