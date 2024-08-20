@@ -151,6 +151,14 @@
 					}}>Dashboard</a
 				>
 				<a
+					href={`/Calls`}
+					class={`${optionStyle} ${currentURL.includes('/Calls') ? selected : ''} transform`}
+					on:click={() => {
+						menuActive = false;
+						currentURL = '/Calls';
+					}}>Calls</a
+				>
+				<a
 					href={`/Leads`}
 					class={`${optionStyle} ${currentURL.includes('/Leads') ? selected : ''} transition-transform`}
 					on:click={() => {
