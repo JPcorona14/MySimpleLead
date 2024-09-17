@@ -136,7 +136,7 @@
 {:else}
 	<section class="flex h-screen pb-5">
 		<div
-			class="flex w-44 flex-col justify-start border border-none bg-main text-white shadow-md shadow-gray-500 md:ml-2 md:mt-2 md:rounded-lg"
+			class="flex w-44 min-w-24 flex-col justify-start border border-none bg-main text-white shadow-md shadow-gray-500 md:ml-2 md:mt-2 md:rounded-lg"
 		>
 			<div class="flex flex-col">
 				<h2 class="mb-5 ml-auto mr-auto mt-10 text-2xl font-bold">Menu</h2>
